@@ -1,0 +1,9 @@
+{
+  "date": "2026-09-18",
+  "fileKey": "cOWxMvQjzFeHaVdKtEXW69",
+  "status": "blocked_by_starter_mcp_allowance",
+  "reviewPage": {"id": "14:2", "name": "03 · Review 01 · Parties to reception", "screenFramesCreated": 0},
+  "preservedPages": ["7:2", "0:1"],
+  "importedSets": {"Button": "14:107", "Input Field": "14:46", "Checkbox Field": "14:189"},
+  "next": "Inspect and reuse review page; build and visually verify Review 01 screens. Do not implement frontend before separate wireframe and visual approvals."
+}

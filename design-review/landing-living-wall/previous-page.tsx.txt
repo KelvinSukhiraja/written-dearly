@@ -1,0 +1,88 @@
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { PageReveal } from "@/components/motion/page-reveal";
+import { WeddingMark } from "@/components/templates/wedding-mark";
+import styles from "./landing.module.css";
+
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  let signedIn = false;
+
+  if (isSupabaseConfigured()) {
+    const supabase = await createClient();
+    const { data } = await supabase.auth.getClaims();
+    signedIn = Boolean(data?.claims);
+  }
+
+  return (
+    <PageReveal className={styles.landing}>
+      <a href="#main" className={styles.skip}>Skip to content</a>
+      <div className={styles.container}>
+        <header className={styles.header}>
+          <Link href="/" className={styles.brand} aria-label="Written Dearly home">
+            <WeddingMark variant="monogram" />
+            <span>Written Dearly<small>THE WEDDING WORKSPACE</small></span>
+          </Link>
+          <Link
+            href={signedIn ? "/dashboard" : "/login"}
+            className={styles.secondary}
+          >
+            {signedIn ? "Open workspace" : "Sign in"}
+          </Link>
+        </header>
+        <main id="main" tabIndex={-1}>
+          <section className={styles.hero} aria-labelledby="landing-title">
+            <div>
+              <p data-reveal className={styles.eyebrow}>A little planning. A beautiful beginning.</p>
+              <h1 data-reveal id="landing-title">Your day.<br />Your people.<br /><em>Beautifully together.</em></h1>
+              <p data-reveal className={styles.intro}>A thoughtful invitation, a personal welcome. Bring your wedding details, guest replies and day-of arrivals together in one calm workspace.</p>
+              <div data-reveal className={styles.actions}>
+                <Link href={signedIn ? "/dashboard" : "/signup"} className={styles.primary}>
+                  {signedIn ? "Open your workspace" : "Create your account"}<span aria-hidden="true">↗</span>
+                </Link>
+                <a href="#how-it-works" className={styles.textLink}>How it works <span aria-hidden="true">↓</span></a>
+              </div>
+            </div>
+            <div data-reveal className={styles.keepsake} aria-hidden="true">
+              <div className={styles.paper}>
+                <span className={styles.eyebrow}>Written with love</span>
+                <WeddingMark className={styles.crest} />
+                <p>For the people<br /><em>who matter.</em></p>
+                <span className={styles.paperRule} />
+                <small>Every detail, dearly considered.</small>
+              </div>
+            </div>
+          </section>
+          <section id="how-it-works" className={styles.workflow} aria-labelledby="workflow-title">
+            <div className={styles.sectionHeading}>
+              <p className={styles.eyebrow}>From the first invitation to the last arrival</p>
+              <h2 id="workflow-title">A place for every little detail.</h2>
+            </div>
+            <ol className={styles.steps}>
+              {[
+                ["Make it yours", "Choose a design and add your names, photos, events and music."],
+                ["Invite your people", "Add guests and companions, then share personal links through WhatsApp."],
+                ["Keep replies together", "See who is coming and keep track of your guest responses."],
+                ["Welcome everyone", "Scan a guest’s QR pass or find their name, then confirm their arrival."],
+              ].map(([title, description], index) => (
+                <li key={title}>
+                  <span className={styles.number}>0{index + 1}</span>
+                  <h3>{title}</h3>
+                  <p>{description}</p>
+                </li>
+              ))}
+            </ol>
+          </section>
+        </main>
+        <footer className={styles.footer}>
+          <p>Written Dearly</p>
+          <p>
+            For the people who matter
+          </p>
+        </footer>
+      </div>
+    </PageReveal>
+  );
+}

@@ -1,0 +1,2 @@
+'use client';
+export default function ErrorPage({reset}:{reset:()=>void}){return <main className="min-h-[60dvh] grid place-items-center p-6"><div className="card section-card max-w-lg text-center"><h1 className="studio-heading">A moment, please.</h1><p className="my-6 text-muted">We couldn’t load this page. Check your connection and try again. Your saved information is safe.</p><button className="btn btn-primary" onClick={reset}>Try again</button></div></main>;}

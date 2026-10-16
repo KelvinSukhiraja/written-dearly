@@ -1,0 +1,19 @@
+.wd-wedding-mark {
+  display: block;
+  flex: none;
+  background-color: currentColor;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  pointer-events: none;
+}
+.wd-wedding-mark-crest {
+  width: 96px;
+  aspect-ratio: 405 / 500;
+  mask-image: url("/invitation-art/cm-crest.png");
+}
+.wd-wedding-mark-monogram {
+  width: 36px;
+  aspect-ratio: 275 / 260;
+  mask-image: url("/invitation-art/cm-monogram.svg");
+}

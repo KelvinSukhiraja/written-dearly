@@ -1,0 +1,71 @@
+import { createRequire } from "node:module";
+import fs from "node:fs/promises";
+import assert from "node:assert/strict";
+const require = createRequire(import.meta.url);
+const { chromium } = require(process.argv[2]);
+const browser = await chromium.launch({ channel: "msedge", headless: true });
+const page = await browser.newPage();
+const errors = [];
+page.on("pageerror", e => errors.push(e.message));
+await fs.mkdir("design-review/guest-workflow/screenshots", { recursive: true });
+try {
+  for (const width of [1440, 768, 390]) {
+    await page.setViewportSize({width, height:1000});
+    await page.goto("http://localhost:3000/dev/review?view=guests", {waitUntil:"networkidle"});
+    await page.getByText("Guest list", {exact:true}).waitFor();
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
+    if (width > 640) assert.equal(await page.getByRole("table").isVisible(), true);
+    await page.screenshot({path:`design-review/guest-workflow/screenshots/table-${width}.png`,fullPage:true,caret:"initial"});
+    await page.getByRole("button", {name:"+ Add guest",exact:true}).click();
+    await page.getByLabel("Guest or family name").fill("Review guest");
+    await page.getByLabel("Invited by").selectOption("bride");
+    await page.getByLabel("WhatsApp number").fill("abc81234567890");
+    assert.equal(await page.getByLabel("WhatsApp number").inputValue(), "81234567890");
+    await page.getByLabel("Extra guests allowed").fill("2");
+    await page.getByText("Invitee + 2 companions = 3 people maximum.").waitFor();
+    await page.getByText("Invitation will be addressed to +6281234567890").waitFor();
+    await page.screenshot({path:`design-review/guest-workflow/screenshots/form-${width}.png`,fullPage:true,caret:"initial"});
+    await page.getByRole("button",{name:"Cancel",exact:true}).click();
+  }
+  await page.getByLabel("Search", {exact:true}).fill("Olivia");
+  await page.getByRole("button", {name:"Edit Olivia Bennett",exact:true}).filter({visible:true}).click();
+  assert.equal(await page.getByLabel("People attending").count(),0);
+  await page.locator('select[name="rsvp_status"]').selectOption("attending");
+  await page.getByLabel("People attending").fill("3");
+  assert.equal(await page.getByLabel("People attending").evaluate(el => el.validity.rangeOverflow),true);
+  await page.getByRole("button",{name:"Cancel",exact:true}).click();
+  await page.getByLabel("Search", {exact:true}).fill("");
+  await page.getByRole("button",{name:"Prepare invitation for Charlotte Green",exact:true}).filter({visible:true}).click();
+  assert.equal(await page.getByRole("button",{name:"Open WhatsApp",exact:true}).isDisabled(),true);
+  assert.equal(await page.getByRole("button",{name:"I sent it — mark as sent",exact:true}).isDisabled(),true);
+  await page.getByRole("button",{name:"Wedding-day QR",exact:true}).click();
+  await page.getByAltText("Reception QR code for Charlotte Green").waitFor();
+  await page.getByRole("button",{name:"Close dialog"}).click();
+  await page.getByRole("button",{name:"+ Add guest",exact:true}).click();
+  await page.getByLabel("Guest or family name").fill("Preserve draft");
+  await page.getByLabel("Invited by").selectOption("groom");
+  await page.getByLabel("WhatsApp number").fill("81234567890");
+  // Explicitly abort the request: no fixture records can be written to a live database.
+  await page.route("**/*", route => route.request().method() === "POST" ? route.abort("failed") : route.continue());
+  await page.getByRole("button",{name:"Save guest",exact:true}).click();
+  await page.getByRole("alert").filter({hasText:"could not be confirmed"}).waitFor();
+  assert.equal(await page.getByLabel("Guest or family name").inputValue(),"Preserve draft");
+  await page.setViewportSize({width:1440,height:1000});
+  await page.goto("http://localhost:3000/dev/review?view=guests-many");
+  await page.getByRole("table").waitFor();
+  assert.equal(await page.locator(".guest-table tbody tr").count(),25);
+  await page.getByRole("button",{name:"Next",exact:true}).click();
+  await page.getByText("26–50 of 125",{exact:true}).waitFor();
+  await page.getByLabel("Rows per page").selectOption("100");
+  assert.equal(await page.locator(".guest-table tbody tr").count(),100);
+  await page.locator(".guest-toolbar select").nth(1).selectOption("sent");
+  await page.getByText("1–63 of 63",{exact:true}).waitFor();
+  await page.getByLabel("Search",{exact:true}).fill("no matching guest");
+  await page.getByText("No matching guests",{exact:true}).waitFor();
+  await page.goto("http://localhost:3000/dev/review?view=guests-empty");
+  await page.getByText("Add your first guest",{exact:true}).waitFor();
+  console.log("PASS: pagination, page-size changes, sent filtering and empty states across 125 fictional guests.");
+  assert.deepEqual(errors,[]);
+  console.log("PASS: desktop/tablet/mobile layout, phone filtering, companion count, RSVP bounds, localhost sharing guard, QR rendering and failed-save draft preservation. No live writes or messages.");
+} finally { await browser.close(); }
+

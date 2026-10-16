@@ -1,0 +1,9 @@
+# Landing page theme alignment — 15 October 2026
+
+The landing page retained the older blue w wordmark, saturated actions and oversized sans-serif hero after the management redesign. Match the latest near-white/slate workspace palette, pale blue-grey actions, serif display typography and original C/M artwork. Use the existing monogram and crest component. Preserve account entry and authenticated dashboard routing.
+
+The responsive layout pairs a concise introduction with a decorative brand card and four steps describing implemented functionality: invitation editing, manual WhatsApp sharing, replies and confirmed QR arrivals. The decorative card is branding, not a selectable invitation design or a preview of customer content. It contains no guest data. A skip link, visible keyboard focus and existing reduced-motion behavior remain available.
+
+Styles are isolated in a CSS module; private workspace desktop zoom is not applied to the public landing page. Existing public invitation and management surfaces remain independent. Notion requirements were added to the project second brain. This is a local presentation change, with no database or infrastructure changes.
+
+Verification: TypeScript (`npx tsc --noEmit`) and targeted ESLint passed. Edge browser checks at 1440, 768, 390 and 320px passed without horizontal overflow or page errors. Signed-out primary entry points to `/signup`; header sign-in remains `/login`. Keyboard Tab starts at Skip to content and Enter focuses main. Reduced-motion heading remains visible. Desktop and mobile screenshots were visually inspected and are saved in `design-review/landing-2026-10-15/screenshots`. Existing signed-in routing was preserved in code but was not exercised with an authenticated browser session. No production build or deployment was performed for this scoped visual change.

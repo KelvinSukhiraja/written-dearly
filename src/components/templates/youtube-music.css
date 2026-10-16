@@ -1,0 +1,26 @@
+.youtube-music {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px;
+  text-align: center;
+}
+.youtube-music button {
+  padding: 12px 20px;
+  border: 1px solid #766f68;
+  border-radius: 6px;
+  background: #f7f4ef;
+  color: #3c3835;
+  cursor: pointer;
+}
+.youtube-music p {
+  margin: 16px 0;
+  line-height: 1.6;
+}
+.youtube-music small {
+  display: block;
+  line-height: 1.6;
+}
+.youtube-music a,
+.invite-classic .youtube-music a {
+  text-decoration: underline;
+}

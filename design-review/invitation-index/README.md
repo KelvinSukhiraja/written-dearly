@@ -1,0 +1,9 @@
+# Invitation Index — approved implementation scope
+
+The owner selected the ORIGINAL Invitation Index concept, not the later combined SaaS/pricing mockup. Build only its horizontal nine-image editorial gallery, oversized Written Dearly wordmark and lower floral/story section. Preserve spacious proportions, thin serif type and warm ivory. No pricing, FAQ, product benefits, checkout or new catalogue page in this slice.
+
+Reference: approved-reference.png. New local editorial image assets are generated from that approved reference using built-in imagegen. Gallery contact sheet prompt: nine equal cells, flowers/venue/couple/embossed paper/botanical Alex & Jamie invitation/flowers/lake/embossed florals/table. Floral image prompt: expand the approved lower-right white cosmos and cotton-paper photograph. These are illustrative editorial images, not newly available invitation templates.
+
+Animation: select images with gallery buttons, previous/next controls, keyboard arrows and touch swipes. Selected image expands while strip translates. Native vertical scrolling, brief entrance and lower-section reveal/parallax. Reduced motion removes animation; content remains visible without JavaScript. Existing account routing retained. No live data changes.
+
+Verification: production build including TypeScript and targeted ESLint passed. Edge at 1440, 1024, 768, 390 and 320px checked no document overflow and wordmark element bounds. Gallery next/previous, keyboard Home/End/arrows, wraparound, touch swipe, reduced-motion preference, skip-to-main and no-JavaScript content passed without console/page errors. Desktop and mobile screenshots visually inspected; a final type-only refinement adds space for italic glyph overhang. Dedicated screenshots are in screenshots/. Signed-in routing is retained but not exercised with an authenticated session. No deployment.

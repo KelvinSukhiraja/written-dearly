@@ -1,0 +1,105 @@
+import Link from "next/link";
+import Image from "next/image";
+import { createClient } from "@/lib/supabase/server";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { WeddingMark } from "@/components/templates/wedding-mark";
+import { LandingMotion } from "@/components/landing/landing-motion";
+import photo from "../../public/invitation-art/coastal/opening-photo.png";
+import styles from "./landing.module.css";
+
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  let signedIn = false;
+  if (isSupabaseConfigured()) {
+    const supabase = await createClient();
+    const { data } = await supabase.auth.getClaims();
+    signedIn = Boolean(data?.claims);
+  }
+  const entry = signedIn ? "/dashboard" : "/signup";
+  return (
+    <LandingMotion className={styles.landing}>
+      <a href="#main" className={styles.skip}>Skip to content</a>
+      <header className={styles.header}>
+        <Link href="/" className={styles.brand} aria-label="Written Dearly home">
+          <WeddingMark variant="monogram" />
+          <span>Written Dearly<span className={styles.brandDot} aria-hidden="true">✳</span></span>
+        </Link>
+        <nav aria-label="Landing page navigation">
+          <a className={styles.navLink} href="#designs">The designs</a>
+          <Link className={styles.headerAction} href={signedIn ? "/dashboard" : "/login"}>{signedIn ? "Your workspace" : "Sign in"} <span aria-hidden="true">↗</span></Link>
+        </nav>
+      </header>
+      <main id="main" tabIndex={-1}>
+        <section data-wall-story className={styles.story} aria-labelledby="landing-title">
+          <div data-wall-stage className={styles.stage}>
+            <div className={styles.heroCopy}>
+              <p className={styles.eyebrow}><span className={styles.dot} /> Wedding invitations. With feeling.</p>
+              <h1 id="landing-title">A little digital.<br /><em>Deeply</em><br /><em className={styles.indent}>personal.</em><span className={styles.asterisk} aria-hidden="true">✳</span></h1>
+              <p className={styles.intro}>For the big day. The small details.<br />And everyone you can’t imagine it without.</p>
+              <Link href={entry} className={styles.primary}>{signedIn ? "Open your workspace" : "Make it yours"}<span aria-hidden="true">↗</span></Link>
+              <a href="#designs" className={styles.scrollHint}><span aria-hidden="true">↓</span> A few pieces. One beautiful beginning.</a>
+            </div>
+            <div className={styles.wall} aria-hidden="true">
+              <span className={styles.wallWord}>dearly.</span>
+              <div className={styles.assembly}>
+                <div className={styles.invitationBase} />
+                <div className={`${styles.piece} ${styles.titlePiece}`}>
+                  <small>TOGETHER IS A BEAUTIFUL PLACE TO BE</small>
+                  <p>Alex <em>&</em> Jamie</p>
+                </div>
+                <div className={`${styles.piece} ${styles.photoPiece}`}>
+                  <Image src={photo} alt="" fill sizes="(max-width: 600px) 240px, 400px" preload placeholder="blur" />
+                </div>
+                <div className={`${styles.piece} ${styles.detailPiece}`}>
+                  <span>WE’RE GETTING MARRIED</span>
+                  <p>With you, it’s a celebration.</p>
+                  <small>12 JUNE 2027 · JOIN US</small>
+                </div>
+                <div className={`${styles.piece} ${styles.typePiece}`}><span>the best</span><em>is yet<br />to come.</em><small>A NOTE TO OUR FAVOURITE PEOPLE</small></div>
+                <div className={`${styles.piece} ${styles.stampPiece}`}><span>made<br /><em>for you.</em></span><span>↗</span></div>
+              </div>
+              <div className={styles.wallCaption}><span>01 — A LITTLE OF EVERYTHING YOU LOVE</span><span className={styles.finished}>ALL COMING TOGETHER.</span></div>
+              <div className={styles.progressTrack}><span /></div>
+            </div>
+          </div>
+        </section>
+        <div data-ribbon className={styles.ribbon} aria-hidden="true"><span>BIG FEELINGS. SMALL DETAILS. <i>✳</i> BEAUTIFULLY TOGETHER. <i>✳</i> BIG FEELINGS. SMALL DETAILS.</span></div>
+        <section id="designs" className={styles.showcase} aria-labelledby="design-title">
+          <div className={styles.sectionHeading}><p className={styles.eyebrow}>01 / A FEELING, NOT JUST A FORMAT</p><h2 id="design-title">Looks like you.<br /><em>Feels like forever.</em></h2><p>Considered typography. Room for your story.<br />An invitation that sets the tone before the day begins.</p></div>
+          <div className={styles.designGrid}>
+            <article data-landing-reveal className={styles.design}>
+              <div className={styles.botanicalPreview}>
+                <div className={styles.botanicalCard}><span>THE WEDDING OF</span><p>Alex<br /><em>&</em><br />Jamie</p><span>THE BEGINNING OF OUR ALWAYS</span></div>
+                <span className={styles.designBadge}>01 / CLASSIC</span>
+              </div>
+              <div className={styles.designMeta}><h3>A modern heirloom.</h3><p>Botanical textures. A timeless beginning.</p></div>
+            </article>
+            <article data-landing-reveal className={`${styles.design} ${styles.offsetDesign}`}>
+              <div className={styles.coastalPreview}>
+                <Image src={photo} alt="A couple by the sea, from the Coastal design reference" fill sizes="(max-width: 700px) 100vw, 50vw" placeholder="blur" />
+                <div className={styles.coastalType}><span>A LOVE LIKE NO OTHER</span><p>Meet me<br /><em>by the sea.</em></p></div>
+                <span className={styles.designBadge}>02 / COASTAL · DESIGN PREVIEW</span>
+              </div>
+              <div className={styles.designMeta}><h3>A little wild at heart.</h3><p>Coastal light. An editorial point of view.</p></div>
+            </article>
+          </div>
+          <p className={styles.sampleNote}>Illustrative compositions with sample names. Explore available designs in your workspace.</p>
+          <Link href={signedIn ? "/dashboard/invitation/designs" : "/signup"} className={styles.textLink}>Find your beginning <span aria-hidden="true">↗</span></Link>
+        </section>
+        <section id="how-it-works" className={styles.workflow} aria-labelledby="workflow-title">
+          <div className={styles.sectionHeading}><p className={styles.eyebrow}>02 / BEAUTIFUL OUTSIDE. THOUGHTFUL INSIDE.</p><h2 id="workflow-title">Less organising.<br /><em>More celebrating.</em></h2></div>
+          <ol className={styles.steps}>
+            {[
+              ["Make it yours.", "Start with a design. Add your names, photos, events and the music that feels like you."],
+              ["Bring them together.", "Add guests and companions. Share each personal invitation through WhatsApp, then keep replies in one place."],
+              ["Be there for the moment.", "Welcome your people with QR passes. Scan or search, confirm arrivals, and let the celebration begin."],
+            ].map(([title, description], index) => <li key={title}><span>0{index + 1}</span><div><h3>{title}</h3><p>{description}</p></div><span className={styles.stepStar} aria-hidden="true">↗</span></li>)}
+          </ol>
+        </section>
+        <section className={styles.closing} aria-labelledby="closing-title"><p className={styles.eyebrow}>YOUR NEXT CHAPTER STARTS HERE</p><h2 id="closing-title">Make something<br /><em>worth opening.</em><span aria-hidden="true">✳</span></h2><Link href={entry} className={styles.lightButton}>{signedIn ? "Back to your workspace" : "Let’s make it yours"}<span aria-hidden="true">↗</span></Link><p>A thoughtful invitation. A very you beginning.</p></section>
+      </main>
+      <footer className={styles.footer}><Link href="/" className={styles.brand}><WeddingMark variant="monogram" /><span>Written Dearly</span></Link><p>For the people who matter.</p><a href="#main" className={styles.textLink}>Back to top ↑</a></footer>
+    </LandingMotion>
+  );
+}

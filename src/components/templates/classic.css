@@ -1,0 +1,767 @@
+html:has(.invite-classic) {
+  scroll-behavior: smooth;
+}
+
+
+html:has(.invite-classic),
+body:has(.invite-classic) {
+  background: #f7f4ef;
+}
+
+.invite-classic {
+  --ink: #3c3835;
+  --muted: #766f68;
+  --paper: #f7f4ef;
+  --blush: #e6cfc7;
+  --sage: #dce2d7;
+  --gold: #b89b72;
+  min-height: 100dvh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.invite-classic * {
+  box-sizing: border-box;
+}
+
+.invite-classic a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.invite-classic .invite-draft {
+  margin: 0;
+  padding: 0.65rem 1.5rem;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.invite-classic .hero {
+  min-height: 100svh;
+  color: #fff;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  background-position: center;
+  background-size: cover;
+}
+
+.invite-classic .hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(33, 28, 25, 0.52),
+    rgba(33, 28, 25, 0.15) 42%,
+    rgba(33, 28, 25, 0.58)
+  );
+}
+
+.invite-classic .nav,
+.invite-classic .hero-content,
+.invite-classic .scroll-cue {
+  position: relative;
+  z-index: 1;
+}
+
+.invite-classic .nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px clamp(22px, 5vw, 72px);
+  letter-spacing: 0.08em;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.invite-classic .monogram {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 19px;
+  letter-spacing: 0.03em;
+  text-transform: none;
+}
+
+.invite-classic .monogram i,
+.invite-classic footer i,
+.invite-classic .signature i {
+  color: var(--gold);
+  font-style: normal;
+}
+
+.invite-classic .nav-links {
+  display: flex;
+  gap: 26px;
+}
+
+.invite-classic .nav-links a {
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.invite-classic .nav-links a:hover {
+  opacity: 1;
+}
+
+.invite-classic .hero-content {
+  text-align: center;
+  margin: auto;
+  padding: 60px 20px 40px;
+}
+.invite-classic .guest-greeting {
+  font:
+    italic 17px Georgia,
+    serif;
+  margin: 24px auto 0;
+  max-width: 400px;
+}
+.invite-classic .couple-section {
+  text-align: center;
+}
+.invite-classic .couple-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(30px, 8vw, 100px);
+  max-width: 920px;
+  margin: auto;
+}
+.invite-classic .couple-card img {
+  width: 100%;
+  aspect-ratio: 4/5;
+  object-fit: cover;
+  border-radius: 200px 200px 4px 4px;
+}
+.invite-classic .couple-card h3 {
+  font-size: 38px;
+  margin: 25px 0 15px;
+}
+.invite-classic .couple-card p,
+.invite-classic .milestone p,
+.invite-classic .useful-grid p {
+  font-size: 15px;
+  line-height: 1.9;
+  color: var(--muted);
+  white-space: pre-line;
+}
+.invite-classic .milestones {
+  background: #ebe9df;
+}
+.invite-classic .milestone {
+  margin: 40px auto;
+  padding: 0 0 25px 30px;
+  border-left: 1px solid var(--gold);
+  max-width: 620px;
+}
+.invite-classic .milestone span {
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+}
+.invite-classic .milestone h3,
+.invite-classic .useful-grid h3 {
+  font-size: 30px;
+  margin: 12px 0;
+}
+.invite-classic .useful-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px 70px;
+}
+.invite-classic .useful-grid a {
+  display: inline-block;
+  margin-top: 20px;
+  border-bottom: 1px solid var(--gold);
+  font-size: 13px;
+}
+.invite-classic .reception-pass {
+  max-width: 420px;
+  margin: auto;
+  text-align: center;
+  background: #fffdf7;
+  border: 1px solid #d7cec5;
+  padding: 35px 20px;
+}
+.invite-classic .reception-pass h3 {
+  font-size: 30px;
+  margin: 20px 0;
+}
+.invite-classic .reception-pass img {
+  margin: 20px auto;
+  max-width: 100%;
+}
+.invite-classic .reception-pass p {
+  font-size: 14px;
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+.invite-classic .pass-section {
+  background: #e7e9df;
+}
+.invite-classic .story-copy p {
+  white-space: pre-line;
+}
+.invite-classic .gallery-item {
+  cursor: zoom-in;
+}
+.invite-classic .gallery-item:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+@media (max-width: 600px) {
+  .invite-classic .couple-grid,
+  .invite-classic .useful-grid {
+    grid-template-columns: 1fr;
+  }
+  .invite-classic .couple-card {
+    max-width: 360px;
+    margin: auto;
+  }
+  .invite-classic h1 {
+    font-size: clamp(52px, 12vw, 100px);
+    overflow-wrap: anywhere;
+  }
+}
+
+.invite-classic .eyebrow,
+.invite-classic .event-label {
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 10px;
+}
+
+.invite-classic .eyebrow.light {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.invite-classic h1,
+.invite-classic h2,
+.invite-classic h3,
+.invite-classic footer div,
+.invite-classic .signature {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.invite-classic h1 {
+  margin: 24px 0 20px;
+  font-size: clamp(64px, 12vw, 152px);
+  line-height: 0.82;
+  letter-spacing: -0.07em;
+}
+
+.invite-classic .hero h1 span {
+  display: block;
+}
+
+.invite-classic .hero h1 em {
+  display: block;
+  color: var(--blush);
+  font-size: 0.34em;
+  line-height: 1.35;
+  letter-spacing: 0;
+}
+
+.invite-classic .hero-rule {
+  width: 64px;
+  height: 1px;
+  margin: 0 auto 18px;
+  background: var(--gold);
+}
+
+.invite-classic .hero-date {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.invite-classic .countdown {
+  display: flex;
+  justify-content: center;
+  gap: clamp(15px, 4vw, 40px);
+  margin-top: 44px;
+}
+
+.invite-classic .countdown-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 37px;
+}
+
+.invite-classic .countdown-item strong {
+  font-family: Georgia, serif;
+  font-size: 25px;
+  font-weight: 400;
+}
+
+.invite-classic .countdown-item span {
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.invite-classic .scroll-cue {
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 11px;
+  padding-bottom: 28px;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.invite-classic .scroll-cue i {
+  width: 1px;
+  height: 42px;
+  background: var(--gold);
+}
+
+.invite-classic .section {
+  padding: clamp(78px, 11vw, 150px) clamp(22px, 8vw, 130px);
+}
+
+.invite-classic .story {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: clamp(40px, 9vw, 150px);
+  align-items: center;
+  background: var(--paper);
+}
+
+.invite-classic .section-heading {
+  margin-bottom: 34px;
+}
+
+.invite-classic .section-heading > span {
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 10px;
+}
+
+.invite-classic .section-heading h2 {
+  font-size: clamp(40px, 5vw, 68px);
+  line-height: 1;
+  margin: 17px 0 0;
+  letter-spacing: -0.045em;
+}
+
+.invite-classic .story-copy p {
+  color: var(--muted);
+  line-height: 1.9;
+  font-size: 15px;
+  max-width: 420px;
+}
+
+.invite-classic .signature {
+  display: block;
+  font-size: 28px;
+  margin-top: 35px;
+}
+
+.invite-classic .story-image {
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  max-height: 650px;
+}
+
+.invite-classic .story-image img,
+.invite-classic .gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.invite-classic .details {
+  background: var(--sage);
+}
+
+.invite-classic .details > .section-heading {
+  text-align: center;
+}
+
+.invite-classic .details-empty {
+  text-align: center;
+  color: var(--muted);
+}
+
+.invite-classic .event-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 900px;
+  margin: 58px auto 0;
+  gap: 1px;
+  background: rgba(60, 56, 53, 0.18);
+}
+
+.invite-classic .event-grid.single {
+  grid-template-columns: 1fr;
+  max-width: 460px;
+}
+
+.invite-classic .event-card {
+  background: var(--sage);
+  text-align: center;
+  padding: clamp(38px, 6vw, 70px) 20px;
+}
+
+.invite-classic .event-card h3 {
+  font-size: clamp(28px, 3vw, 42px);
+  margin: 20px 0 13px;
+}
+
+.invite-classic .event-label {
+  color: var(--muted);
+}
+
+.invite-classic .event-card p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+  margin: 3px 0;
+}
+
+.invite-classic .event-card .event-time {
+  color: var(--ink);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-size: 10px;
+  margin-bottom: 18px;
+}
+
+.invite-classic .event-card a {
+  display: inline-block;
+  border-bottom: 1px solid var(--gold);
+  color: var(--ink);
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  margin-top: 22px;
+  padding-bottom: 5px;
+  text-transform: uppercase;
+}
+
+.invite-classic .gallery {
+  background: #f1e9e2;
+}
+
+.invite-classic .gallery .section-heading {
+  text-align: center;
+}
+
+.invite-classic .gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 190px;
+  gap: 12px;
+}
+
+.invite-classic .gallery-item {
+  margin: 0;
+  overflow: hidden;
+}
+
+.invite-classic .gallery-item img {
+  transition: transform 0.5s ease;
+}
+
+.invite-classic .gallery-item:hover img {
+  transform: scale(1.04);
+}
+
+.invite-classic .gallery-1 {
+  grid-row: span 2;
+}
+
+.invite-classic .gallery-4 {
+  grid-row: span 2;
+}
+
+.invite-classic .gallery-5 {
+  grid-column: span 2;
+}
+
+.invite-classic .rsvp {
+  background: var(--paper);
+}
+
+.invite-classic .rsvp-inner {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.invite-classic .rsvp .section-heading {
+  text-align: center;
+}
+
+.invite-classic form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.invite-classic label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.invite-classic label span {
+  text-transform: none;
+  letter-spacing: 0;
+  opacity: 0.7;
+}
+
+.invite-classic input,
+.invite-classic select,
+.invite-classic textarea {
+  border: 0;
+  border-bottom: 1px solid #cfc6bd;
+  border-radius: 0;
+  padding: 13px 0;
+  background: transparent;
+  color: var(--ink);
+  font:
+    15px Georgia,
+    serif;
+  outline: none;
+}
+
+.invite-classic input:focus,
+.invite-classic select:focus,
+.invite-classic textarea:focus {
+  border-color: var(--gold);
+}
+
+.invite-classic textarea {
+  resize: vertical;
+}
+
+.invite-classic .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 35px;
+}
+
+.invite-classic .submit-button,
+.invite-classic .confirmation button {
+  align-self: center;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 16px 25px;
+  cursor: pointer;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.invite-classic .submit-button:hover,
+.invite-classic .confirmation button:hover {
+  background: transparent;
+  color: var(--ink);
+}
+
+.invite-classic .submit-button:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.invite-classic .submit-button span {
+  color: var(--gold);
+  font-size: 17px;
+  margin-left: 10px;
+}
+
+.invite-classic .confirmation {
+  text-align: center;
+  border: 1px solid #d7cec5;
+  padding: 50px 20px;
+}
+
+.invite-classic .confirmation-mark {
+  display: grid;
+  place-items: center;
+  margin: 0 auto 22px;
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  color: var(--gold);
+}
+
+.invite-classic .confirmation h3 {
+  font-size: 27px;
+  margin: 0 0 10px;
+}
+
+.invite-classic .confirmation p {
+  color: var(--muted);
+  margin-bottom: 26px;
+}
+
+.invite-classic .rsvp-note,
+.invite-classic .rsvp-error {
+  text-align: center;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.invite-classic .rsvp-error {
+  color: #8a3a32;
+}
+
+.invite-classic footer {
+  background: #3c3835;
+  color: #f7f4ef;
+  padding: 72px 20px;
+  text-align: center;
+}
+
+.invite-classic footer p {
+  color: var(--blush);
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.invite-classic footer div {
+  font-size: clamp(38px, 6vw, 64px);
+  margin: 18px 0 25px;
+  letter-spacing: -0.04em;
+}
+
+.invite-classic footer span {
+  color: #b8afa7;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 700px) {
+  .invite-classic .nav-links {
+    display: none;
+  }
+
+  .invite-classic .hero-content {
+    padding-top: 30px;
+  }
+
+  .invite-classic .story {
+    grid-template-columns: 1fr;
+  }
+
+  .invite-classic .story-image {
+    order: -1;
+    max-height: 480px;
+  }
+
+  .invite-classic .event-grid,
+  .invite-classic .event-grid.single {
+    grid-template-columns: 1fr;
+    margin-top: 35px;
+  }
+
+  .invite-classic .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 180px;
+    gap: 8px;
+  }
+
+  .invite-classic .gallery-1,
+  .invite-classic .gallery-4 {
+    grid-row: span 1;
+  }
+
+  .invite-classic .gallery-5 {
+    grid-column: span 1;
+  }
+
+  .invite-classic .form-row {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:has(.invite-classic) {
+    scroll-behavior: auto;
+  }
+
+  .invite-classic .gallery-item img {
+    transition: none;
+  }
+}
+
+/* The approved C/M identity is scoped to invitations that enable it. */
+.invite-with-wedding-mark .nav {
+  background: #fdfdfc;
+  color: #505b6c;
+  border-bottom: 1px solid #e5e7eb;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+.invite-with-wedding-mark .nav .monogram {
+  display: flex;
+  align-items: center;
+  min-width: 44px;
+  min-height: 44px;
+}
+.invite-with-wedding-mark .nav-links a { opacity: 1; }
+.invite-classic .wedding-mark-closing {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: #fafaf9;
+  color: #505b6c;
+}
+.invite-classic .wedding-mark-closing > :not(.wedding-mark-watermark) {
+  position: relative;
+  z-index: 1;
+}
+.invite-classic .wedding-mark-closing > p,
+.invite-classic .wedding-mark-closing > span:not(.wedding-mark-watermark) {
+  color: #667080;
+}
+.invite-classic .wedding-mark-closing i { color: #667080; }
+.invite-classic .wedding-mark-watermark {
+  position: absolute;
+  z-index: 0;
+  width: clamp(170px, 20vw, 250px);
+  right: clamp(24px, 5vw, 80px);
+  top: 50%;
+  transform: translateY(-50%);
+  color: #505b6c;
+  opacity: .065;
+  user-select: none;
+}
+@media (max-width: 760px) {
+  .invite-with-wedding-mark .nav .wd-wedding-mark { width: 30px; }
+  .invite-classic .wedding-mark-closing { padding-bottom: 170px; }
+  .invite-classic .wedding-mark-watermark {
+    width: 104px;
+    top: auto;
+    bottom: 20px;
+    right: 24px;
+    transform: none;
+  }
+}
