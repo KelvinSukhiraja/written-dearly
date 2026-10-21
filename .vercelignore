@@ -1,13 +1,13 @@
 # Keep CLI uploads focused on application sources and public assets.
-.git
-.next
-.vercel
-node_modules
-.env*
-docs
-design-review
-zip-review
-scripts
-supabase
+/.git
+/.next
+/.vercel
+/node_modules
+/.env*
+/docs
+/design-review
+/zip-review
+/scripts
+/supabase
 *.tsbuildinfo
 *.log
