@@ -10,6 +10,10 @@
 
 # Written Dearly — Product & Engineering Second Brain
 
+> **Vercel hosting preparation (21 October 2026):** Owner requested Vercel hosting. Current production build passes. Added CLI upload exclusions and deployment/environment/auth verification notes. No Vercel project is linked locally and dashboard sign-in is pending; nothing has been deployed. See [deployment checkpoint](vercel-deployment.md). WhatsApp Business stays disabled; no live schema/auth configuration changed.
+
+> **WhatsApp Business API (16 October 2026):** Owner requested API sending; account and number are ready, template is pending. Added a disabled local owner-only template-send panel, duplicate-safe delivery reservation, signed webhook and separate delivery statuses. Provider/SQL/browser/HTTP checks and production build pass. No live schema or Meta setup changed and no real messages sent. See [template draft, activation checkpoint and verification](whatsapp-business-2026-10-16.md).
+
 > **Blank homepage (16 October 2026):** At the owner's request, removed all landing-page content from `/` and replaced it with a blank white page. Earlier landing designs are historical references.
 
 > **Original Invitation Index (15 October 2026):** Owner chose the original generated horizontal-gallery/oversized-wordmark concept and authorized implementation of that page only. Replaces the living design wall; additional SaaS and pricing/catalogue sections are deferred. See [current implementation](invitation-index-2026-10-15.md). Prior versions preserved.

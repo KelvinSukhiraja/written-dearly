@@ -21,16 +21,19 @@ export function readConfig(env: Record<string, string | undefined>): WhatsAppCon
 }
 
 export function templateParameters(guest: { name: string; public_token: string; invited_count: number }, couple: string, slug: string, origin: string) {
-  return [guest.name, couple, String(guest.invited_count), invitationLink(origin, slug, guest.public_token)];
+  return [guest.name, couple, `${guest.invited_count} ${guest.invited_count === 1 ? "place" : "places"}`, invitationLink(origin, slug, guest.public_token)];
 }
 export function renderTemplate(parameters: string[]) {
   return TEMPLATE_BODY.replace(/\{\{([1-4])\}\}/g, (_, n: string) => parameters[Number(n) - 1] ?? "");
 }
 
 export type SendResult = { status: "accepted"; providerId: string } | { status: "failed" | "unknown"; code: string };
+export function validTemplateParameters(parameters: string[]) {
+  return parameters.length === 4 && parameters.every(p => !!p.trim() && p.length <= 1024 && !/[\r\n\t]/.test(p));
+}
 export async function sendTemplate(config: WhatsAppConfig, phone: string, parameters: string[], attempt: string, transport: typeof fetch = fetch): Promise<SendResult> {
   const to = whatsappPhone(phone);
-  if (!to || parameters.length !== 4 || parameters.some(p => !p.trim() || p.length > 1024 || /[\r\n\t]/.test(p))) return { status: "failed", code: "invalid_parameters" };
+  if (!to || !validTemplateParameters(parameters)) return { status: "failed", code: "invalid_parameters" };
   try {
     const response = await transport(`https://graph.facebook.com/${config.version}/${config.phoneId}/messages`, {
       method: "POST", redirect: "error", cache: "no-store", signal: AbortSignal.timeout(15000),

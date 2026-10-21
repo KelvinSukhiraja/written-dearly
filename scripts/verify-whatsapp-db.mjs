@@ -10,7 +10,7 @@ try {
     grant usage on schema auth,public to authenticated,anon,service_role; grant execute on function auth.uid() to authenticated;
     create table public.invitations(id uuid primary key,user_id uuid references auth.users,published boolean);
     create table public.guests(id uuid primary key,invitation_id uuid references public.invitations,version integer,phone text);
-    grant select on public.invitations to authenticated; grant select,update on public.invitations,public.guests to service_role;
+    grant select on public.invitations to authenticated; grant select,insert,update on public.invitations,public.guests to service_role;
     insert into auth.users values('${owner}'); insert into public.invitations values('${wedding}','${owner}',true);
     insert into public.guests values('${guest}','${wedding}',1,'+447700900123');`);
   await db.exec(await readFile("supabase/whatsapp_delivery.proposal.sql","utf8"));
@@ -41,5 +41,13 @@ try {
   await db.exec("select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000099',false)");
   assert.equal((await db.query("select id from public.whatsapp_deliveries")).rows.length,0);
   await db.exec("set role anon"); await assert.rejects(db.query("select * from public.whatsapp_deliveries"),/permission denied/);
+  await db.exec("set role service_role");
+  for (let i=5;i<=24;i++) {
+    const id=`00000000-0000-4000-8000-${String(i).padStart(12,"0")}`;
+    await db.query("insert into public.guests values($1,$2,1,'+447700900123')",[id,wedding]);
+    const result=await db.query("select public.reserve_whatsapp_invitation($1,$1,$2,1,'447700900123','wedding_invitation','en_US') as ok",[id,owner]);
+    assert.equal(result.rows[0].ok,i<24);
+  }
+  assert.equal((await db.query("select count(*)::int as n from public.whatsapp_deliveries")).rows[0].n,20);
   console.log("PASS: ownership/publication/version/recipient reservation guards, duplicate prevention, receipt correlation, monotonic status, owner read isolation and service-only writes.");
 } finally { await db.close(); }

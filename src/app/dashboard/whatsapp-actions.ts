@@ -1,7 +1,7 @@
 "use server";
 import { requireInvitation } from "@/lib/dashboard/session";
 import { whatsappConfig, deliveryStore } from "@/lib/whatsapp/server";
-import { renderTemplate, templateParameters, sendTemplate, type Delivery } from "@/lib/whatsapp/core";
+import { renderTemplate, templateParameters, validTemplateParameters, sendTemplate, type Delivery } from "@/lib/whatsapp/core";
 import { whatsappPhone } from "@/lib/guests/whatsapp";
 
 async function context(guestId: string) {
@@ -33,6 +33,7 @@ export async function prepareWhatsAppApi(guestId: string) {
   if (!whatsappPhone(guest.phone) || !guest.public_token) issue = "Save a valid international phone number and personal link first.";
   if (!couple(invitation)) issue = "Save the couple names before sending.";
   const parameters = config ? templateParameters(guest, couple(invitation), invitation.slug, config.origin) : [];
+  if (!validTemplateParameters(parameters)) issue = "Save names without line breaks and check that all template values are present and under 1,024 characters.";
   return { issue, delivery, recipient: guest.phone as string | null, version: guest.version as number,
     preview: parameters.length ? renderTemplate(parameters) : "", template: config ? `${config.template} · ${config.language}` : "" };
 }
@@ -47,6 +48,7 @@ export async function sendWhatsAppInvitation(guestId: string, expectedVersion: n
   if (!invitation.published || !phone || !guest.public_token || !couple(invitation) || guest.version !== expectedVersion)
     return { ok: false, message: "Invitation or guest details changed. Refresh the preview before sending." };
   const parameters = templateParameters(guest, couple(invitation), invitation.slug, config.origin);
+  if (!validTemplateParameters(parameters)) return { ok: false, message: "Check the template values and remove line breaks from names. Nothing was sent." };
   if (renderTemplate(parameters) !== reviewedPreview) return { ok: false, message: "The message changed. Refresh and review it before sending." };
   const store = deliveryStore();
   const attempt = crypto.randomUUID();

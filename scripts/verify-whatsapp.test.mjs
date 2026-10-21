@@ -15,6 +15,7 @@ test("reviewed body and provider parameters include the same personal link and s
   assert.match(renderTemplate(params),/reserved 3 places/);
   assert.match(params[3],/\/i\/our-wedding\?guest=a{64}$/);
   assert.ok(renderTemplate(params).includes("Alex & Jamie"));
+  assert.equal(templateParameters({name:"Alex",invited_count:1,public_token:"a"},"Amelia & James","wedding",config.origin)[2],"1 place");
 });
 test("Cloud API request uses server auth, approved template, international recipient and attempt correlation", async () => {
   const result = await sendTemplate(config,"+62 812-3456-7890",params,"attempt-id",async (url,options) => {
