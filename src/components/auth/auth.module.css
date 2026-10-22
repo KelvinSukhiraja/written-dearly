@@ -61,4 +61,25 @@
   .story, .caption { display: none; }
   .formPanel { padding: 32px 24px; }
 }
+@media (max-height: 740px) {
+  .page { padding: 16px; }
+  .identity { padding: 24px 32px; }
+  .story { padding: 24px 0; gap: 16px; }
+  .story > :first-child { width: 76px; }
+  .formPanel { padding: 28px 36px; }
+  .form { margin-top: 24px; gap: 16px; }
+  .switch { margin-top: 22px; padding-top: 18px; }
+}
+@media (max-width: 700px) and (max-height: 740px) {
+  .identity { padding: 16px 24px; }
+  .formPanel { padding: 20px 24px; }
+}
+@media (max-width: 700px) and (max-height: 600px) {
+  .formPanel { padding: 16px 24px; }
+  .formPanel h1 { margin-top: 8px; }
+  .intro { margin-top: 10px; line-height: 1.55; }
+  .form { margin-top: 20px; gap: 14px; }
+  .field { gap: 6px; }
+  .switch { margin-top: 18px; padding-top: 14px; }
+}
 @media (prefers-reduced-motion: reduce) { .page .submit { transition: none; } }
