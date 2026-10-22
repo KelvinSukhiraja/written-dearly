@@ -76,8 +76,8 @@
 .coastal-opening,
 .coastal-home {
   position: relative;
-  height: 874px;
-  min-height: 100svh;
+  height: 100vh;
+  height: 100dvh;
   isolation: isolate;
 }
 .coastal-opening.coastal-opening-leaving {
@@ -116,19 +116,25 @@
 }
 .coastal-opening {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: max(86px, env(safe-area-inset-top)) 16px
+    max(24px, env(safe-area-inset-bottom));
+  overflow-y: auto;
 }
 .coastal-opening-card {
   position: relative;
-  width: 299px;
+  width: min(299px, 100%);
   min-height: 445px;
   flex: none;
+  margin: auto;
 }
 .coastal-opening-frame {
   position: absolute;
   top: 0;
   left: 0;
+  width: 100%;
+  height: 100%;
   max-width: none;
 }
 .coastal-opening-content {
@@ -189,6 +195,32 @@
 }
 .coastal-opening-content button {
   margin-top: 16px;
+  min-height: 44px;
+  padding: 11px 24px;
+  border: 1px solid #402518;
+  border-radius: 24px;
+  background: #402518;
+  color: #fff8ef;
+  font: 13px/20px var(--coastal-sans);
+}
+.coastal-opening-content button::after {
+  content: none;
+}
+.coastal-opening-content button:focus-visible {
+  outline-color: #402518;
+}
+@media (max-height: 650px) {
+  .coastal-opening-card {
+    min-height: 0;
+  }
+  .coastal-opening-content {
+    padding-block: 32px;
+  }
+  .coastal-opening-photo {
+    width: clamp(64px, 18dvh, 117px);
+    height: clamp(64px, 18dvh, 117px);
+    margin-block: 12px;
+  }
 }
 .coastal-home-title {
   position: absolute;
