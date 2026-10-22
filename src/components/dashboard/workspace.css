@@ -416,7 +416,7 @@
 }
 .workspace-mobile-more [popover] > p { padding: 8px 12px 14px; }
 .workspace-mobile-more [popover]::backdrop { background: transparent; }
-.workspace .preview-back { display:inline-flex; align-items:center; min-height:44px; font-size:14px; color:var(--muted); }
+.workspace .preview-back { display:inline-flex; align-items:center; gap:6px; min-height:44px; font-size:14px; color:var(--muted); }
 .workspace .preview-toolbar { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px; }
 .workspace .preview-toolbar .tab-bar { margin:0; }
 .workspace .preview-toolbar-actions { display:flex; gap:8px; flex-wrap:wrap; }

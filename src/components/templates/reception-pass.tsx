@@ -1,4 +1,5 @@
 "use client";
+import { ArrowIcon } from "@/components/arrow-icon";
 import { useEffect, useState } from "react";
 export function ReceptionPass({
   token,
@@ -60,7 +61,7 @@ export function ReceptionPass({
           href={image}
           download="wedding-reception-pass.png"
         >
-          Save reception pass ↓
+          Save reception pass <ArrowIcon direction="down" />
         </a>
       )}
     </div>

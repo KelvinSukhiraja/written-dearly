@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowIcon } from "@/components/arrow-icon";
 import {
   type ReactNode,
   useCallback,
@@ -338,14 +339,14 @@ export function InvitationOpening({
             aria-disabled={opening}
           >
             <span className="wd-open-icon" aria-hidden="true">
-              ↗
+              <ArrowIcon direction="up-right" />
             </span>
             <span>Open your invitation</span>
             <small>A celebration of love, a lifetime in the making</small>
           </button>
           <span className="wd-imprint">Written Dearly</span>
           <button className="wd-skip" onClick={() => finish()}>
-            Skip intro <span aria-hidden="true">→</span>
+            Skip intro <ArrowIcon />
           </button>
           <span className="wd-sr-only" role="status">
             {opening ? "Opening your invitation" : ""}

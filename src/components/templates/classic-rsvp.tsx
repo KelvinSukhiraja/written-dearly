@@ -1,4 +1,5 @@
 "use client";
+import { ArrowIcon } from "@/components/arrow-icon";
 import { useActionState, useState, useEffect } from "react";
 import { submitRsvp, type RsvpResult } from "@/app/i/[slug]/actions";
 import type { GuestContext } from "@/lib/supabase/types";
@@ -138,8 +139,13 @@ export function ClassicRsvp({
         {pending
           ? "Saving your reply…"
           : guest.rsvp_status === "pending"
-            ? "Send your RSVP →"
-            : "Update your RSVP →"}
+            ? "Send your RSVP"
+            : "Update your RSVP"}
+        {!pending && (
+          <>
+            {" "}<ArrowIcon />
+          </>
+        )}
       </button>
     </form>
   );

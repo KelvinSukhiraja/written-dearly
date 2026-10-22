@@ -1,4 +1,5 @@
 "use client";
+import { ArrowIcon } from "@/components/arrow-icon";
 import { useState, useTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -236,7 +237,7 @@ export function CheckInView({ guests }: { guests: Guest[] }) {
               {g.checked_in
                 ? `${arrivedCount(g)} checked in ✓`
                 : g.rsvp_status === "attending"
-                  ? "Awaiting arrival →"
+                  ? <>Awaiting arrival <ArrowIcon /></>
                   : g.rsvp_status === "declined"
                     ? "Not attending"
                     : "RSVP pending"}

@@ -1,4 +1,5 @@
 "use client";
+import { ArrowIcon } from "@/components/arrow-icon";
 import Link from "next/link";
 import { useActionState, useState, useEffect } from "react";
 import { updateInvitation, type ActionResult } from "@/app/dashboard/actions";
@@ -774,7 +775,7 @@ export function InvitationEditor({
               href="/dashboard/preview"
               target="_blank"
             >
-              Preview saved invitation ↗
+              Preview saved invitation <ArrowIcon direction="up-right" />
             </Link>
             <button className="btn btn-primary" disabled={pending || busy > 0}>
               {pending

@@ -1,4 +1,5 @@
 "use client";
+import { ArrowIcon } from "@/components/arrow-icon";
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { addGuest, deleteGuest, importGuests, type ActionResult } from "@/app/dashboard/actions";
@@ -74,7 +75,7 @@ export function GuestsTable({ guests, slug = "", events = [], published = false,
         <div className="card p-4" key={label}><dt className="text-xs text-muted">{label}</dt><dd className="mt-2 text-2xl font-semibold">{value}</dd></div>)}
     </dl>
     {setupIssue && <p className="notice notice-error" role="alert">{setupIssue}</p>}
-    {!published && <div className="notice">Your invitation is a draft. You can prepare your guest list now. <a className="underline" href="/dashboard/invitation">Review and publish your invitation →</a></div>}
+    {!published && <div className="notice">Your invitation is a draft. You can prepare your guest list now. <a className="underline" href="/dashboard/invitation">Review and publish your invitation <ArrowIcon /></a></div>}
     <div className="flex flex-wrap items-center justify-between gap-3">
       <div><h2 className="text-lg font-semibold">Guest list</h2><p className="text-sm text-muted">{guests.length} invitations · One row per guest or family</p></div>
       <div className="flex gap-2">

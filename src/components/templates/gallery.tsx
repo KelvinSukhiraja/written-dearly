@@ -1,4 +1,5 @@
 "use client";
+import { ArrowIcon } from "@/components/arrow-icon";
 import { useState } from "react";
 import { Dialog } from "@/components/ui/dialog";
 import type { InvitationGalleryItem } from "@/lib/invitations/theme";
@@ -45,14 +46,14 @@ export function Gallery({ photos }: { photos: InvitationGalleryItem[] }) {
                 setSelected((selected + photos.length - 1) % photos.length)
               }
             >
-              ← Previous
+              <ArrowIcon direction="left" /> Previous
             </button>
             <button
               type="button"
               className="btn btn-secondary"
               onClick={() => setSelected((selected + 1) % photos.length)}
             >
-              Next →
+              Next <ArrowIcon />
             </button>
           </div>
         </Dialog>

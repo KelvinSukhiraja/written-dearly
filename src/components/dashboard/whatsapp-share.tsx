@@ -1,4 +1,5 @@
 "use client";
+import { ArrowIcon } from "@/components/arrow-icon";
 import { useState, useTransition } from "react";
 import { markInvitationSent } from "@/app/dashboard/guest-actions";
 import type { Guest } from "@/lib/supabase/types";
@@ -151,7 +152,7 @@ export function WhatsAppShare({
                 )
               }
             >
-              Open WhatsApp ↗
+              Open WhatsApp <ArrowIcon direction="up-right" />
             </a>
           ) : (
             <button className="btn btn-primary" disabled>

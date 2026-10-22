@@ -1,3 +1,4 @@
+import { ArrowIcon } from "@/components/arrow-icon";
 import Link from "next/link";
 import { requireInvitation } from "@/lib/dashboard/session";
 import { PageHeader } from "@/components/page-header";
@@ -17,7 +18,7 @@ export default async function DesignsPage() {
         className="text-sm text-muted underline"
         href="/dashboard/invitation"
       >
-        ← Invitation
+        <ArrowIcon direction="left" /> Invitation
       </Link>
       <PageHeader
         title="Choose your invitation"

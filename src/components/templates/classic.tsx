@@ -1,3 +1,4 @@
+import { ArrowIcon } from "@/components/arrow-icon";
 import "./classic.css";
 import { ClassicCountdown } from "@/components/templates/classic-countdown";
 import { ClassicRsvp } from "@/components/templates/classic-rsvp";
@@ -261,7 +262,7 @@ export function ClassicInvitation({
                           target="_blank"
                           rel="noreferrer"
                         >
-                          View on map <span aria-hidden="true">↗</span>
+                          View on map <ArrowIcon direction="up-right" />
                         </a>
                       ) : null}
                     </article>
@@ -302,7 +303,7 @@ export function ClassicInvitation({
                     <p>{detail.body}</p>
                     {detail.url && (
                       <a href={detail.url} target="_blank" rel="noreferrer">
-                        More information ↗
+                        More information <ArrowIcon direction="up-right" />
                       </a>
                     )}
                   </article>

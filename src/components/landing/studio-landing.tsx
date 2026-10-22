@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowIcon } from "@/components/arrow-icon";
 import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -63,7 +64,7 @@ export function StudioLanding() {
       <header className={s.header}>
         <a href="#studio" className={s.headerLink}>The studio <span aria-hidden="true">+</span></a>
         <Link href="/" aria-label="Written Dearly home" className={s.brand}>Written <em>Dearly</em><span>AN INVITATION STUDIO</span></Link>
-        <Link href="/login" className={s.headerLink}>Log in <span aria-hidden="true">↗</span></Link>
+        <Link href="/login" className={s.headerLink}>Log in <ArrowIcon direction="up-right" /></Link>
       </header>
       <main id="main">
         <section className={s.hero} data-hero aria-labelledby="hero-title">
@@ -121,7 +122,7 @@ export function StudioLanding() {
           <div className={s.closingBottom} data-reveal-studio><p>A beautiful beginning<br />is only a few words away.</p><Link href="/signup" className={s.beginLink}><span>Create your account</span><span className={s.arrowCircle}><Arrow /></span></Link></div>
         </section>
       </main>
-      <footer className={s.footer}><span>© {new Date().getFullYear()} WRITTEN DEARLY</span><Link href="/login">Already part of the story? <span>Log in ↗</span></Link><a href="#main">BACK TO TOP ↑</a></footer>
+      <footer className={s.footer}><span>© {new Date().getFullYear()} WRITTEN DEARLY</span><Link href="/login">Already part of the story? <span>Log in <ArrowIcon direction="up-right" /></span></Link><a href="#main">BACK TO TOP <ArrowIcon direction="up" /></a></footer>
     </div>
   );
 }

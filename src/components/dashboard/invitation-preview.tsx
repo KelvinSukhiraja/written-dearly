@@ -1,4 +1,5 @@
 "use client";
+import { ArrowIcon } from "@/components/arrow-icon";
 import { useState, useRef, useEffect } from "react";
 import type { Invitation } from "@/lib/supabase/types";
 export function InvitationPreview({ invitation }: { invitation: Invitation }) {
@@ -35,7 +36,7 @@ export function InvitationPreview({ invitation }: { invitation: Invitation }) {
             </button>
           ))}
         </div>
-        <div className="preview-toolbar-actions"><a className="btn btn-secondary" href={`/preview/${invitation.slug}`} target="_blank" rel="noopener noreferrer">Open full page <span aria-hidden="true">↗</span></a><button
+        <div className="preview-toolbar-actions"><a className="btn btn-secondary" href={`/preview/${invitation.slug}`} target="_blank" rel="noopener noreferrer">Open full page <ArrowIcon direction="up-right" /></a><button
           className="btn btn-secondary"
           onClick={() => setRevision((v) => v + 1)}
         >

@@ -1,3 +1,4 @@
+import { ArrowIcon } from "@/components/arrow-icon";
 import Link from "next/link";
 import type { Invitation, Guest } from "@/lib/supabase/types";
 import { guestSummary } from "@/lib/guests/summary";
@@ -98,7 +99,7 @@ export function DashboardHome({
           <h2>{next.title}</h2>
           <p>{next.text}</p>
           <Link className="btn btn-primary shrink-0" href={next.href}>
-            {next.label} →
+            {next.label} <ArrowIcon />
           </Link>
         </div>
         <div className="home-identity" aria-hidden="true">
@@ -163,7 +164,7 @@ export function DashboardHome({
         <WeddingMark />
         <p>Wedding day? Scan a pass or find someone by name.</p>
         <Link className="btn btn-secondary" href="/dashboard/check-in">
-          Open check-in →
+          Open check-in <ArrowIcon />
         </Link>
       </div>
     </div>

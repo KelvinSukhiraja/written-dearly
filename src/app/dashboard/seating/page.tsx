@@ -1,3 +1,4 @@
+import { ArrowIcon } from "@/components/arrow-icon";
 import Link from "next/link";
 import { getGuests, requireInvitation } from "@/lib/dashboard/session";
 import { PageHeader } from "@/components/page-header";
@@ -16,7 +17,7 @@ export default async function SeatingPage() {
         description="Plan by party and see the people expected at each table. Edit table assignments in Guests & RSVP."
       />
       <Link className="btn btn-secondary" href="/dashboard/guests">
-        Manage assignments →
+        Manage assignments <ArrowIcon />
       </Link>
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
         {[...groups].map(([table, parties]) => (

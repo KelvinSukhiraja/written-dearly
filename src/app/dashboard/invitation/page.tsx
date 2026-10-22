@@ -1,3 +1,4 @@
+import { ArrowIcon } from "@/components/arrow-icon";
 import { PageHeader } from "@/components/page-header";
 import { InvitationEditor } from "@/components/dashboard/invitation-editor";
 import { requireInvitation } from "@/lib/dashboard/session";
@@ -28,7 +29,7 @@ export default async function InvitationPage({
           className="btn btn-secondary"
           href="/dashboard/invitation/designs"
         >
-          Choose design →
+          Choose design <ArrowIcon />
         </Link>
       </div>
       <InvitationEditor
