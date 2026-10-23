@@ -3,6 +3,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import Image from "next/image";
+import { CoastalAmpersand } from "./coastal-ampersand";
 import {
   useCallback,
   useEffect,
@@ -10,7 +11,11 @@ import {
   useState,
   type CSSProperties,
 } from "react";
-import { animateCoastalMenu, useCoastalMotion } from "./coastal-motion";
+import {
+  animateCoastalMenu,
+  closeCoastalMenu,
+  useCoastalMotion,
+} from "./coastal-motion";
 import type { GuestContext, Invitation } from "@/lib/supabase/types";
 import { parseInvitationTheme } from "@/lib/invitations/theme";
 import { formatInviteDate } from "@/lib/invitations/display";
@@ -183,9 +188,23 @@ export function CoastalInvitation({
   const [failedVendorLogo, setFailedVendorLogo] = useState("");
   const [musicPlaying, setMusicPlaying] = useState(false);
   const menuRef = useRef<HTMLDialogElement>(null);
+  const closingMenu = useRef(false);
+  const menuExit = useRef<ReturnType<typeof closeCoastalMenu>>(undefined);
   const audioRef = useRef<HTMLAudioElement>(null);
   const vendorLogoRef = useRef<HTMLImageElement>(null);
   const homeRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!opened || openingVisible) return;
+    // Use the existing scroll surface, including embedded owner previews.
+    let parent = rootRef.current?.parentElement;
+    while (parent && parent !== document.documentElement) {
+      if (/(auto|scroll)/.test(getComputedStyle(parent).overflowY)) break;
+      parent = parent.parentElement;
+    }
+    const scroller = parent || document.documentElement;
+    scroller.classList.add("coastal-scroll-snap");
+    return () => scroller.classList.remove("coastal-scroll-snap");
+  }, [opened, openingVisible]);
   useEffect(() => {
     // An image can fail before hydration attaches its error handler.
     const logo = vendorLogoRef.current;
@@ -222,16 +241,29 @@ export function CoastalInvitation({
         ? document.activeElement
         : null;
     dialog?.showModal();
+    closingMenu.current = false;
     const revertMotion = dialog ? animateCoastalMenu(dialog) : undefined;
     const overflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
+      menuExit.current?.kill();
       revertMotion?.();
       dialog?.close();
       document.body.style.overflow = overflow;
       trigger?.focus({ preventScroll: true });
     };
   }, [menu]);
+  function closeMenu(after?: () => void) {
+    if (closingMenu.current) return;
+    closingMenu.current = true;
+    const complete = () => {
+      setMenu(false);
+      if (after) requestAnimationFrame(after);
+    };
+    if (menuRef.current)
+      menuExit.current = closeCoastalMenu(menuRef.current, complete);
+    else complete();
+  }
   async function openInvitation() {
     setOpened(true);
     if (audioRef.current) {
@@ -247,13 +279,19 @@ export function CoastalInvitation({
     );
   }
   function go(id: string) {
-    setMenu(false);
-    setOpeningVisible(false);
-    setOpened(true);
-    requestAnimationFrame(() => {
-      const el = document.getElementById(id);
-      el?.scrollIntoView({ behavior: "auto" });
-      el?.focus({ preventScroll: true });
+    closeMenu(() => {
+      setOpeningVisible(false);
+      setOpened(true);
+      requestAnimationFrame(() => {
+        const el = rootRef.current?.querySelector<HTMLElement>(`#${id}`);
+        el?.focus({ preventScroll: true });
+        el?.scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)")
+            .matches
+            ? "instant"
+            : "smooth",
+        });
+      });
     });
   }
   const nav = [
@@ -284,6 +322,7 @@ export function CoastalInvitation({
             className="coastal-menu-button"
             onClick={() => setMenu(true)}
             aria-label="Open invitation menu"
+            aria-expanded={menu}
           >
             <img
               src={art(opened ? "menu-dark.svg" : "menu-light.svg")}
@@ -352,14 +391,18 @@ export function CoastalInvitation({
                   <br />
                   {groom} &amp; {bride}
                 </p>
-                <button onClick={openInvitation} type="button">
+                <button
+                  onClick={openInvitation}
+                  type="button"
+                  disabled={opened}
+                >
                   open invitation
                 </button>
               </div>
             </div>
           </section>
         )}
-        <div hidden={!opened}>
+        <div className="coastal-content" hidden={!opened}>
           <section
             className="coastal-home"
             id="coastal-home"
@@ -384,7 +427,9 @@ export function CoastalInvitation({
               <p>THE WEDDING OF</p>
               <h1>
                 <span>{groom}</span>
-                <em>&amp;</em>
+                <em aria-label="and">
+                  <CoastalAmpersand />
+                </em>
                 <span>{bride}</span>
               </h1>
             </div>
@@ -844,14 +889,14 @@ export function CoastalInvitation({
             aria-label="Invitation navigation"
             onCancel={(e) => {
               e.preventDefault();
-              setMenu(false);
+              closeMenu();
             }}
           >
             <button
               className="coastal-menu-close"
               type="button"
               aria-label="Close invitation menu"
-              onClick={() => setMenu(false)}
+              onClick={() => closeMenu()}
             >
               <img src={art("24-713-imgX.svg")} alt="" />
             </button>

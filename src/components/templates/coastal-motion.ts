@@ -6,7 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-/** Layered photo parallax and soft reveals, with native scrolling. */
+/** Choreographed reveals layered over native scrolling. */
 export function useCoastalMotion(
   root: RefObject<HTMLDivElement | null>,
   opened: boolean,
@@ -42,41 +42,112 @@ export function useCoastalMotion(
               ease: "sine.out",
               clearProps: "transform",
             });
+            gsap.from(select(".coastal-opening-content > *"), {
+              opacity: 0,
+              y: 18,
+              stagger: 0.11,
+              delay: 0.25,
+              duration: 1,
+              ease: "power3.out",
+              clearProps: "opacity,transform",
+            });
             return;
           }
 
           const opening = select(".coastal-opening");
           if (opening.length) {
+            const card = element.querySelector<HTMLElement>(
+              ".coastal-opening-card",
+            )!;
+            const cardBox = card.getBoundingClientRect();
+            const openingBox = opening[0].getBoundingClientRect();
+            const fillScale =
+              Math.max(
+                openingBox.width / cardBox.width,
+                openingBox.height / cardBox.height,
+              ) * 1.5;
             gsap
               .timeline({ onComplete: dismissOpening })
-              .to(select(".coastal-opening-card"), {
+              .to(select(".coastal-opening-content > *"), {
                 opacity: 0,
-                y: -12,
-                duration: 0.55,
-                ease: "power1.inOut",
+                y: -26,
+                stagger: 0.055,
+                duration: 0.45,
+                ease: "power2.in",
               })
               .to(
+                select(".coastal-opening-card"),
+                {
+                  scale: fillScale,
+                  y:
+                    openingBox.top +
+                    openingBox.height / 2 -
+                    (cardBox.top + cardBox.height / 2),
+                  duration: 1.1,
+                  ease: "power3.inOut",
+                },
+                0.2,
+              )
+              .to(
                 opening,
-                { opacity: 0, duration: 0.65, ease: "sine.inOut" },
-                0.15,
+                {
+                  opacity: 0,
+                  duration: 0.65,
+                  ease: "sine.inOut",
+                },
+                1.3,
               );
           }
           // Keep the clipping frame stationary; only its image gets parallax.
           // Scaling the frame lets the cover bleed across the next section.
           gsap.from(
             select(
-              ".coastal-home-title > p, .coastal-home-title h1 > *, .coastal-date",
+              ".coastal-home-title > p, .coastal-home-title h1 > span, .coastal-date",
             ),
             {
               opacity: 0,
-              y: 12,
-              stagger: 0.12,
-              delay: opening.length ? 0.4 : 0,
-              duration: 1.1,
+              y: 32,
+              stagger: 0.16,
+              delay: opening.length ? 1.3 : 0,
+              duration: 1.35,
               ease: "power2.out",
               clearProps: "opacity,transform",
             },
           );
+          element
+            .querySelectorAll<SVGPathElement>(".coastal-ampersand-ink")
+            .forEach((pen) => {
+              const length = pen.getTotalLength();
+              const ink = pen
+                .closest("svg")
+                ?.querySelector<SVGGElement>("[data-ink-mask]");
+              if (!ink) return;
+              gsap.set(ink, { attr: { mask: `url(#${ink.dataset.inkMask})` } });
+              gsap
+                .timeline({
+                  delay: opening.length ? 0.95 : 0,
+                  onComplete: () => {
+                    ink.removeAttribute("mask");
+                  },
+                })
+                .fromTo(
+                  pen,
+                  {
+                    strokeDasharray: `${length} ${length}`,
+                    strokeDashoffset: length,
+                  },
+                  {
+                    strokeDashoffset: 0,
+                    duration: 2.4,
+                    ease: "sine.inOut",
+                  },
+                )
+                .to(pen, {
+                  strokeWidth: 160,
+                  duration: 0.25,
+                  ease: "sine.inOut",
+                });
+            });
 
           // Animate the image inside its clipped frame, not the layout box.
           // Overscan keeps photo edges covered throughout the full travel.
@@ -84,9 +155,9 @@ export function useCoastalMotion(
             (image: HTMLElement) => {
               gsap.fromTo(
                 image,
-                { scale: 1.14, yPercent: -3 },
+                { scale: 1.2, yPercent: -6 },
                 {
-                  yPercent: 3,
+                  yPercent: 6,
                   ease: "none",
                   scrollTrigger: {
                     trigger: element.querySelector(".coastal-home"),
@@ -99,7 +170,7 @@ export function useCoastalMotion(
             },
           );
           gsap.to(select(".coastal-home-title"), {
-            y: -36,
+            y: -70,
             ease: "none",
             scrollTrigger: {
               trigger: element.querySelector(".coastal-home"),
@@ -115,9 +186,9 @@ export function useCoastalMotion(
             if (!image) return;
             gsap.fromTo(
               image,
-              { scale: 1.12, yPercent: -3 },
+              { scale: 1.16, yPercent: -5 },
               {
-                yPercent: 3,
+                yPercent: 5,
                 ease: "none",
                 scrollTrigger: {
                   trigger: frame,
@@ -130,10 +201,10 @@ export function useCoastalMotion(
           });
           gsap.fromTo(
             select(".coastal-leaves"),
-            { y: -24, rotation: -2 },
+            { y: -45, rotation: -5 },
             {
-              y: 24,
-              rotation: 2,
+              y: 45,
+              rotation: 5,
               ease: "none",
               transformOrigin: "50% 50%",
               scrollTrigger: {
@@ -145,7 +216,7 @@ export function useCoastalMotion(
             },
           );
           select(".coastal-countdown").forEach((countdown: HTMLElement) =>
-            gsap.from(countdown, {
+            gsap.from(countdown.querySelectorAll("p, .countdown-item"), {
               opacity: 0,
               y: 14,
               stagger: 0.13,
@@ -158,20 +229,36 @@ export function useCoastalMotion(
               },
             }),
           );
+          select(".coastal-dress > div").forEach((palette: HTMLElement) => {
+            gsap.from(palette.children, {
+              scale: 0.65,
+              rotation: -12,
+              opacity: 0,
+              stagger: 0.09,
+              duration: 0.8,
+              ease: "back.out(1.3)",
+              clearProps: "opacity,transform",
+              scrollTrigger: { trigger: palette, start: "top 90%", once: true },
+            });
+          });
 
           const reveals: { element: HTMLElement; tween: gsap.core.Tween }[] =
             [];
           const groups = select(
-            ".coastal-couple article, .coastal-details > h2, .coastal-event, .coastal-dress, .coastal-rsvp > h2, .coastal-rsvp > p, .coastal-gallery-board button, .coastal-gift-card, .coastal-wishes > h2, .coastal-wishes-scroll, .coastal-extra",
+            ".coastal-couple article > *, .coastal-details > h2, .coastal-event > *, .coastal-dress > *, .coastal-rsvp > *, .coastal-gallery-board button, .coastal-gift-content > *, .coastal-wishes > h2, .coastal-wishes > p, .coastal-wishes-scroll, .coastal-extra > *, .coastal-footer > *",
           );
           groups.forEach((target: HTMLElement) => {
             const tween = gsap.from(target, {
               opacity: 0,
-              y: 18,
-              duration: 0.95,
-              ease: "power2.out",
-              clearProps: "opacity,transform",
-              scrollTrigger: { trigger: target, start: "top 94%", once: true },
+              y: target.matches(".coastal-gallery-board button") ? 42 : 24,
+              scale: target.matches(".coastal-gallery-board button") ? 0.94 : 1,
+              clipPath: target.matches("h2, h3")
+                ? "inset(0 0 100% 0)"
+                : "inset(0)",
+              duration: 1.15,
+              ease: "power3.out",
+              clearProps: "opacity,transform,clipPath",
+              scrollTrigger: { trigger: target, start: "top 95%", once: true },
             });
             reveals.push({ element: target, tween });
           });
@@ -180,12 +267,17 @@ export function useCoastalMotion(
           // Keyboard navigation must never land on an invisible control.
           const revealFocused = (event: FocusEvent) => {
             reveals.forEach(({ element: target, tween }) => {
-              if (event.target instanceof Node && target.contains(event.target))
+              if (
+                event.target instanceof Node &&
+                (target.contains(event.target) || event.target.contains(target))
+              )
                 tween.progress(1);
             });
           };
           element.addEventListener("focusin", revealFocused);
-          return () => element.removeEventListener("focusin", revealFocused);
+          return () => {
+            element.removeEventListener("focusin", revealFocused);
+          };
         },
       );
 
@@ -247,14 +339,39 @@ export function useCoastalMotion(
 export function animateCoastalMenu(dialog: HTMLDialogElement) {
   const media = gsap.matchMedia();
   media.add("(prefers-reduced-motion: no-preference)", () => {
+    gsap.from(dialog, {
+      clipPath: "inset(0 0 100% 0 round 0 0 35% 35%)",
+      duration: 0.75,
+      ease: "power3.inOut",
+      clearProps: "clipPath",
+    });
     gsap.from(dialog.querySelectorAll("nav a"), {
       opacity: 0,
-      y: 10,
-      duration: 0.55,
-      stagger: 0.055,
+      y: 28,
+      delay: 0.25,
+      duration: 0.7,
+      stagger: 0.065,
       ease: "power2.out",
       clearProps: "opacity,transform",
     });
   });
   return () => media.revert();
+}
+
+export function closeCoastalMenu(
+  dialog: HTMLDialogElement,
+  complete: () => void,
+) {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    complete();
+    return;
+  }
+  // Kill entry motion before reversing, including a rapid open/close gesture.
+  gsap.killTweensOf([dialog, ...dialog.querySelectorAll("nav a")]);
+  return gsap.to(dialog, {
+    clipPath: "inset(0 0 100% 0 round 0 0 35% 35%)",
+    duration: 0.65,
+    ease: "power3.inOut",
+    onComplete: complete,
+  });
 }

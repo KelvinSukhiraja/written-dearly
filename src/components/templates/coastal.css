@@ -9,7 +9,7 @@
   width: 100%;
   max-width: 402px;
   margin: auto;
-  overflow: hidden;
+  overflow: clip;
   background: #eae2d9;
   color: #402518;
   font: 12px/1.1 var(--coastal-sans);
@@ -236,6 +236,13 @@
   font-size: 35px;
   line-height: 0;
   font-style: normal;
+}
+.coastal-ampersand {
+  display: inline-block;
+  width: 0.82em;
+  height: 0.85em;
+  overflow: visible;
+  vertical-align: -0.03em;
 }
 .coastal-date {
   color: #eae2d9;
@@ -872,6 +879,50 @@
   font: 30px/40px var(--coastal-serif);
   text-transform: uppercase;
   text-decoration: none;
+}
+/* Proximity leaves tall sections freely scrollable; never hijack a wheel/touch. */
+@media (prefers-reduced-motion: no-preference) {
+  .coastal-scroll-snap {
+    scroll-snap-type: y proximity;
+  }
+  .coastal-content > section {
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+  }
+  .coastal-scroll-snap:has(dialog[open]),
+  .coastal-scroll-snap:has(input:focus, textarea:focus, select:focus) {
+    scroll-snap-type: none;
+  }
+  .coastal-menu::backdrop {
+    animation: coastal-backdrop-in 0.6s ease both;
+  }
+  .coastal-menu-close img,
+  .coastal-menu-button img {
+    transition: transform 0.35s ease;
+  }
+  .coastal-menu-close:hover img {
+    transform: rotate(90deg);
+  }
+  .coastal-menu-button:hover img {
+    transform: scaleX(0.8);
+  }
+  .coastal-menu nav a {
+    transition:
+      color 0.25s ease,
+      letter-spacing 0.35s ease;
+  }
+  .coastal-menu nav a:hover {
+    color: #fff;
+    letter-spacing: 1px;
+  }
+}
+@keyframes coastal-backdrop-in {
+  from {
+    background: #0000;
+  }
+  to {
+    background: #0008;
+  }
 }
 .coastal-music {
   position: fixed;
