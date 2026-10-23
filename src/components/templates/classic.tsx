@@ -151,7 +151,10 @@ export function ClassicInvitation({
           </section>
           {theme.music_source === "youtube" && theme.youtube_url && (
             <section className="section" aria-label="Our soundtrack">
-              <SectionHeading eyebrow="Our soundtrack" title={theme.music_title} />
+              <SectionHeading
+                eyebrow="Our soundtrack"
+                title={theme.music_title}
+              />
               <YouTubeMusic url={theme.youtube_url} title={theme.music_title} />
             </section>
           )}
@@ -327,6 +330,8 @@ export function ClassicInvitation({
                 closed={theme.rsvp_closed}
                 deadline={theme.rsvp_deadline}
                 wishes={theme.wishes_enabled}
+                events={events}
+                eventRsvp={theme.rsvp_events_enabled}
               />
             </div>
           </section>

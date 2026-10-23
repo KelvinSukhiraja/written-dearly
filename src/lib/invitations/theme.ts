@@ -31,6 +31,7 @@ export type InvitationTheme = {
   youtube_url: string;
   music_title: string;
   rsvp_closed: boolean;
+  rsvp_events_enabled: boolean;
   rsvp_deadline: string;
   wishes_enabled: boolean;
   details: { title: string; body: string; url: string }[];
@@ -98,6 +99,7 @@ export function parseInvitationTheme(
     youtube_url: youtubeUrl(s.youtube_url),
     music_title: str(s.music_title, 100) || "Our soundtrack",
     rsvp_closed: s.rsvp_closed === true,
+    rsvp_events_enabled: s.rsvp_events_enabled === true,
     rsvp_deadline:
       typeof s.rsvp_deadline === "string" &&
       !Number.isNaN(Date.parse(s.rsvp_deadline))

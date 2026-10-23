@@ -5,12 +5,19 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { requireInvitation } from "@/lib/dashboard/session";
 import { parseInvitationTheme } from "@/lib/invitations/theme";
+import { eventRsvpReady } from "@/lib/invitations/event-rsvp-setup";
 import { safeUrl, seatCount } from "@/lib/invitations/validation";
 import { guestDatabaseError } from "@/lib/guests/errors";
-import { normalizeGuestPhone, validGuestEmail, PHONE_ERROR } from "@/lib/guests/contact";
+import {
+  normalizeGuestPhone,
+  validGuestEmail,
+  PHONE_ERROR,
+} from "@/lib/guests/contact";
 import type { Guest, GuestSide, RsvpStatus } from "@/lib/supabase/types";
 
-export type ActionResult = { ok: true; guest?: Guest } | { ok: false; error: string };
+export type ActionResult =
+  | { ok: true; guest?: Guest }
+  | { ok: false; error: string };
 
 function asString(value: FormDataEntryValue | null) {
   return typeof value === "string" ? value.trim() : "";
@@ -107,7 +114,28 @@ export async function updateInvitation(
     };
   }
   if (theme.music_source === "youtube" && !theme.youtube_url)
-    return { ok: false, error: "Add a valid YouTube video link in Music, or choose a different music source." };
+    return {
+      ok: false,
+      error:
+        "Add a valid YouTube video link in Music, or choose a different music source.",
+    };
+  if (theme.rsvp_events_enabled) {
+    if (
+      !theme.events.length ||
+      new Set(theme.events.map((e) => e.id)).size !== theme.events.length
+    )
+      return {
+        ok: false,
+        error:
+          "Add at least one named event with a unique ID before enabling event attendance.",
+      };
+    if (!(await eventRsvpReady(supabase, invitation.id)))
+      return {
+        ok: false,
+        error:
+          "Per-event RSVP needs its database update before it can be enabled.",
+      };
+  }
   if (
     formData.get("published") === "on" &&
     (!asString(formData.get("bride_name")) ||
@@ -157,24 +185,37 @@ export async function addGuest(
     asString(formData.get("invited_count")) || "1",
   );
 
-  if (!name || name.length > 200 || !invitedCount || (side !== "bride" && side !== "groom")) {
-    return { ok: false, error: "Guest name, WhatsApp number and side are required." };
+  if (
+    !name ||
+    name.length > 200 ||
+    !invitedCount ||
+    (side !== "bride" && side !== "groom")
+  ) {
+    return {
+      ok: false,
+      error: "Guest name, WhatsApp number and side are required.",
+    };
   }
   if (!phone) return { ok: false, error: PHONE_ERROR };
-  if (!validGuestEmail(email)) return { ok: false, error: "Enter a valid email address." };
+  if (!validGuestEmail(email))
+    return { ok: false, error: "Enter a valid email address." };
 
-  const { data, error } = await supabase.from("guests").insert({
-    id: crypto.randomUUID(),
-    invitation_id: invitation.id,
-    name,
-    side,
-    group: asString(formData.get("group")) || null,
-    invited_count: invitedCount,
-    email: email || null,
-    phone,
-    table_name: asString(formData.get("table_name")) || null,
-    notes: asString(formData.get("notes")) || null,
-  }).select("*").single();
+  const { data, error } = await supabase
+    .from("guests")
+    .insert({
+      id: crypto.randomUUID(),
+      invitation_id: invitation.id,
+      name,
+      side,
+      group: asString(formData.get("group")) || null,
+      invited_count: invitedCount,
+      email: email || null,
+      phone,
+      table_name: asString(formData.get("table_name")) || null,
+      notes: asString(formData.get("notes")) || null,
+    })
+    .select("*")
+    .single();
 
   if (error) {
     return { ok: false, error: guestDatabaseError(error) };
@@ -199,7 +240,8 @@ export async function importGuests(
   const { supabase, invitation } = await requireInvitation();
   if (
     !Array.isArray(rows) ||
-    rows.length === 0 || rows.length > 500 ||
+    rows.length === 0 ||
+    rows.length > 500 ||
     rows.some(
       (row) =>
         !row ||
@@ -217,9 +259,18 @@ export async function importGuests(
       error: "Import up to 500 parties at a time, with 1–100 seats each.",
     };
   for (const [index, row] of rows.entries()) {
-    if (!normalizeGuestPhone(row.phone)) return { ok: false, error: `Row ${index + 2}: ${PHONE_ERROR}` };
-    if (!validGuestEmail(row.email?.trim() ?? "")) return { ok: false, error: `Row ${index + 2}: enter a valid email address.` };
-    if (row.name.trim().length > 200) return { ok: false, error: `Row ${index + 2}: keep the name under 200 characters.` };
+    if (!normalizeGuestPhone(row.phone))
+      return { ok: false, error: `Row ${index + 2}: ${PHONE_ERROR}` };
+    if (!validGuestEmail(row.email?.trim() ?? ""))
+      return {
+        ok: false,
+        error: `Row ${index + 2}: enter a valid email address.`,
+      };
+    if (row.name.trim().length > 200)
+      return {
+        ok: false,
+        error: `Row ${index + 2}: keep the name under 200 characters.`,
+      };
   }
   const payload = rows
     .map((row) => ({

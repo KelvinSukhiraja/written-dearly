@@ -6,6 +6,9 @@ import { seatCount, receptionToken } from "@/lib/invitations/validation";
 import type { Guest } from "@/lib/supabase/types";
 import { guestDatabaseError } from "@/lib/guests/errors";
 import { normalizeGuestPhone, PHONE_ERROR } from "@/lib/guests/contact";
+import { parseInvitationTheme } from "@/lib/invitations/theme";
+import { eventChoices, permittedEvents } from "@/lib/invitations/event-rsvp";
+import type { EventResponses } from "@/lib/supabase/types";
 
 export async function saveGuest(id: string, form: FormData) {
   const { supabase, invitation } = await requireInvitation();
@@ -15,7 +18,8 @@ export async function saveGuest(id: string, form: FormData) {
       .slice(0, max);
   const invited = seatCount(form.get("invited_count"));
   const status = text("rsvp_status");
-  const count = status === "attending" ? seatCount(form.get("rsvp_attending_count"), 1) : 0;
+  const count =
+    status === "attending" ? seatCount(form.get("rsvp_attending_count"), 1) : 0;
   if (
     !text("name") ||
     !invited ||
@@ -32,9 +36,62 @@ export async function saveGuest(id: string, form: FormData) {
   const phone = normalizeGuestPhone(text("phone"));
   if (!phone) return { ok: false, error: PHONE_ERROR };
   const side = text("side");
-  if (!["bride", "groom"].includes(side)) return { ok: false, error: "Choose bride or groom." };
+  if (!["bride", "groom"].includes(side))
+    return { ok: false, error: "Choose bride or groom." };
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
     return { ok: false, error: "Enter a valid email address." };
+  const theme = parseInvitationTheme(invitation.theme);
+  const access = form.getAll("event_ids").map(String);
+  if (access.some((id) => !theme.events.some((e) => e.id === id)))
+    return {
+      ok: false,
+      error: "The invitation events changed. Reload before editing this guest.",
+    };
+  let eventUpdate: { event_responses?: EventResponses } = {};
+  if (theme.rsvp_events_enabled) {
+    const { data: current, error: readError } = await supabase
+      .from("guests")
+      .select("*")
+      .eq("id", id)
+      .eq("invitation_id", invitation.id)
+      .maybeSingle();
+    if (readError || !current)
+      return {
+        ok: false,
+        error: "Could not load this guest. Refresh and try again.",
+      };
+    if (!("event_responses" in current))
+      return {
+        ok: false,
+        error:
+          "Per-event RSVP needs its database update before replies can be edited.",
+      };
+    if (
+      form.get("event_reply_edited") === "on" ||
+      current.rsvp_status !== status ||
+      (status === "attending" && current.rsvp_attending_count !== count)
+    ) {
+      const allowed = permittedEvents(theme.events, access).map((e) => e.id);
+      const selected =
+        status === "attending"
+          ? form.getAll("selected_events").map(String)
+          : [];
+      if (
+        selected.some((id) => !allowed.includes(id)) ||
+        (status === "attending" && !selected.length)
+      )
+        return {
+          ok: false,
+          error: "Choose at least one invited event for an attending guest.",
+        };
+      eventUpdate = {
+        event_responses:
+          status === "pending"
+            ? {}
+            : eventChoices(allowed, selected, status === "attending"),
+      };
+    }
+  }
   const { data, error } = await supabase
     .from("guests")
     .update({
@@ -51,7 +108,8 @@ export async function saveGuest(id: string, form: FormData) {
       rsvp_attending_count:
         status === "attending" ? count : status === "declined" ? 0 : null,
       responded_at: status === "pending" ? null : new Date().toISOString(),
-      event_ids: form.getAll("event_ids").map(String),
+      event_ids: access,
+      ...eventUpdate,
       version: Number(form.get("version")) + 1,
     })
     .eq("id", id)
@@ -70,15 +128,39 @@ export async function saveGuest(id: string, form: FormData) {
   return { ok: true, guest: data as Guest };
 }
 
-export async function markInvitationSent(id: string, expectedVersion: number, sent: boolean) {
+export async function markInvitationSent(
+  id: string,
+  expectedVersion: number,
+  sent: boolean,
+) {
   const { supabase, invitation } = await requireInvitation();
-  if (!Number.isSafeInteger(expectedVersion) || expectedVersion < 0 || typeof sent !== "boolean")
-    return { ok: false, error: "Refresh this guest before updating their invitation status." };
-  const { data, error } = await supabase.from("guests")
-    .update({ invitation_sent_at: sent ? new Date().toISOString() : null, version: expectedVersion + 1 })
-    .eq("id", id).eq("invitation_id", invitation.id).eq("version", expectedVersion)
-    .select("*").maybeSingle();
-  if (error || !data) return { ok: false, error: error ? guestDatabaseError(error) : "This guest changed in another session. Refresh before trying again." };
+  if (
+    !Number.isSafeInteger(expectedVersion) ||
+    expectedVersion < 0 ||
+    typeof sent !== "boolean"
+  )
+    return {
+      ok: false,
+      error: "Refresh this guest before updating their invitation status.",
+    };
+  const { data, error } = await supabase
+    .from("guests")
+    .update({
+      invitation_sent_at: sent ? new Date().toISOString() : null,
+      version: expectedVersion + 1,
+    })
+    .eq("id", id)
+    .eq("invitation_id", invitation.id)
+    .eq("version", expectedVersion)
+    .select("*")
+    .maybeSingle();
+  if (error || !data)
+    return {
+      ok: false,
+      error: error
+        ? guestDatabaseError(error)
+        : "This guest changed in another session. Refresh before trying again.",
+    };
   revalidatePath("/dashboard", "layout");
   return { ok: true, guest: data as Guest };
 }

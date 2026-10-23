@@ -559,6 +559,37 @@ body:has(.invite-classic) {
   gap: 35px;
 }
 
+.invite-classic .rsvp-fields {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  border: 0;
+  padding: 0;
+}
+.invite-classic .rsvp-fields fieldset {
+  border: 0;
+  padding: 0;
+  min-width: 0;
+}
+.invite-classic .rsvp-fields legend {
+  margin-bottom: 12px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.invite-classic .coastal-event-choices label {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+}
+.invite-classic .coastal-event-choices input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--ink);
+}
+
 .invite-classic .submit-button,
 .invite-classic .confirmation button {
   align-self: center;

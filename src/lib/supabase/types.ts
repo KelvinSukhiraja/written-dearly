@@ -1,5 +1,6 @@
 export type GuestSide = "bride" | "groom";
 export type RsvpStatus = "pending" | "attending" | "declined";
+export type EventResponses = Record<string, "attending" | "declined">;
 
 export type Profile = {
   id: string;
@@ -51,6 +52,7 @@ export type Guest = {
   extra_seats: number;
   version: number;
   invitation_sent_at?: string | null;
+  event_responses?: EventResponses;
 };
 
 export type GuestContext = Pick<
@@ -64,4 +66,8 @@ export type GuestContext = Pick<
   | "table_name"
   | "checkin_token"
   | "event_ids"
->;
+> & {
+  event_responses?: EventResponses;
+  version?: number;
+  event_rsvp_available?: boolean;
+};

@@ -528,6 +528,9 @@ export function CoastalInvitation({
                 closed={theme.rsvp_closed}
                 deadline={theme.rsvp_deadline}
                 wishes={theme.wishes_enabled}
+                events={events}
+                eventRsvp={theme.rsvp_events_enabled}
+                variant="coastal"
               />
             )}
           </section>

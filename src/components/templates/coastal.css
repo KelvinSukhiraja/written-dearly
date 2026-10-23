@@ -238,6 +238,7 @@
   font-style: normal;
 }
 .coastal-date {
+  color: #eae2d9;
   position: absolute;
   bottom: 65px;
   width: 100%;
@@ -481,6 +482,49 @@
 .coastal-reference-form .coastal-event-choices label {
   text-align: left;
   font-size: 11px;
+}
+.coastal-live-form .rsvp-fields {
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+.coastal-live-form .rsvp-fields > label {
+  display: block;
+  margin-bottom: 27px;
+  text-transform: uppercase;
+}
+.coastal-live-form .rsvp-note {
+  text-transform: none;
+  font-size: 11px;
+  line-height: 1.5;
+  margin: 12px 0 20px;
+}
+.coastal-live-form .rsvp-error {
+  margin: 16px 0;
+  line-height: 1.5;
+  color: #833f32;
+}
+.coastal-live-form .confirmation {
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+.coastal-live-form :is(button, input[type="checkbox"]) {
+  position: relative;
+}
+.coastal-live-form .coastal-event-choices label {
+  min-height: 44px;
+  cursor: pointer;
+}
+.coastal-live-form .coastal-event-choices input {
+  flex: none;
+}
+.coastal-live-form .coastal-response button::after {
+  content: "";
+  position: absolute;
+  inset: -12px -4px;
+}
+.coastal-live-form fieldset:disabled {
+  opacity: 0.6;
 }
 .coastal-reference-form .coastal-event-choices input {
   appearance: none;
@@ -846,7 +890,8 @@
 .coastal-viewer .coastal-viewer-header h2 {
   margin-top: 5px;
   font: 28px/1.2 var(--coastal-serif);
-  letter-spacing: 0;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 .coastal-viewer :is(button) {
   display: grid;

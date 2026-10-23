@@ -3,13 +3,15 @@ import { PageHeader } from "@/components/page-header";
 import { InvitationEditor } from "@/components/dashboard/invitation-editor";
 import { requireInvitation } from "@/lib/dashboard/session";
 import Link from "next/link";
+import { eventRsvpReady } from "@/lib/invitations/event-rsvp-setup";
 
 export default async function InvitationPage({
   searchParams,
 }: {
   searchParams: Promise<{ section?: string }>;
 }) {
-  const { invitation, user } = await requireInvitation();
+  const { invitation, user, supabase } = await requireInvitation();
+  const eventSetupReady = await eventRsvpReady(supabase, invitation.id);
   const { section } = await searchParams;
 
   return (
@@ -36,6 +38,7 @@ export default async function InvitationPage({
         key={section ?? "essentials"}
         invitation={invitation}
         userId={user.id}
+        eventSetupReady={eventSetupReady}
         initialTab={section === "publish" ? 6 : 0}
       />
     </div>

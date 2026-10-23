@@ -61,10 +61,12 @@ export function InvitationEditor({
   invitation,
   userId,
   initialTab = 0,
+  eventSetupReady = false,
 }: {
   invitation: Invitation;
   userId: string;
   initialTab?: number;
+  eventSetupReady?: boolean;
 }) {
   const [draft, setDraft] = useState(invitation),
     [theme, setTheme] = useState(() => parseInvitationTheme(invitation.theme)),
@@ -293,6 +295,37 @@ export function InvitationEditor({
           {tab === 1 && (
             <div className="space-y-6">
               <h2>Wedding events</h2>
+              <div className="rounded-lg border border-border p-4 space-y-3">
+                <label className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    checked={theme.rsvp_events_enabled}
+                    disabled={!eventSetupReady && !theme.rsvp_events_enabled}
+                    onChange={(e) =>
+                      setting("rsvp_events_enabled", e.target.checked)
+                    }
+                  />
+                  Ask guests which events they will attend
+                </label>
+                <p className="text-sm text-muted">
+                  Guests choose from their invited events, then give one group
+                  size for all selected events. Unchecked events are recorded as
+                  not attending only when they submit.
+                </p>
+                {!eventSetupReady && (
+                  <p className="notice">
+                    Per-event RSVP needs a database update before it can be
+                    enabled. Your existing RSVP continues to work.
+                  </p>
+                )}
+                {theme.rsvp_events_enabled && (
+                  <p className="text-sm text-muted">
+                    Existing replies remain saved. Event choices stay pending
+                    until guests update their RSVP. Manage each guest’s event
+                    access under Guests.
+                  </p>
+                )}
+              </div>
               <div className="form-grid">
                 <Field
                   label="Main venue"
