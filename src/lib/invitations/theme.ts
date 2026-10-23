@@ -1,5 +1,11 @@
 import { safeUrl } from "./validation";
 import { youtubeUrl } from "./youtube";
+import {
+  parseDressColours,
+  vendorSocialUrl,
+  type DressColour,
+  type VendorFooter,
+} from "./coastal-options";
 
 export type InvitationEvent = {
   id: string;
@@ -35,7 +41,13 @@ export type InvitationTheme = {
   rsvp_deadline: string;
   wishes_enabled: boolean;
   public_wishes_visible: boolean;
-  dress_code: { enabled: boolean; title: string; note: string };
+  dress_code: {
+    enabled: boolean;
+    title: string;
+    note: string;
+    colors: DressColour[];
+  };
+  footer: VendorFooter;
   gift: {
     enabled: boolean;
     bank: string;
@@ -58,7 +70,8 @@ export function parseInvitationTheme(
 ): InvitationTheme {
   const s = theme ?? {};
   const dress = obj(s.dress_code),
-    gift = obj(s.gift);
+    gift = obj(s.gift),
+    footer = obj(s.footer);
   const eventDress =
     list(s.events)
       .map((e) => str(obj(e).dress_code, 300))
@@ -122,6 +135,7 @@ export function parseInvitationTheme(
     wishes_enabled: s.wishes_enabled !== false,
     public_wishes_visible: s.public_wishes_visible !== false,
     dress_code: {
+      colors: parseDressColours(dress.colors),
       enabled:
         typeof dress.enabled === "boolean" ? dress.enabled : !!eventDress,
       title: str(dress.title, 300) || eventDress,
@@ -134,6 +148,13 @@ export function parseInvitationTheme(
       bank: str(gift.bank, 100),
       account_holder: str(gift.account_holder, 200),
       account_number: str(gift.account_number, 100),
+    },
+    footer: {
+      enabled: footer.enabled === true,
+      vendor_name: str(footer.vendor_name, 100),
+      logo_url: safeUrl(footer.logo_url) || "",
+      whatsapp_url: vendorSocialUrl(footer.whatsapp_url, "whatsapp"),
+      instagram_url: vendorSocialUrl(footer.instagram_url, "instagram"),
     },
     details: list(s.details)
       .map((value) => {
@@ -156,4 +177,17 @@ export function parseInvitationTheme(
       })
       .filter((v) => v.title),
   };
+}
+
+// Older open editors omit new nested settings; preserve those on save.
+export function mergeInvitationTheme(
+  current: Record<string, unknown> | null,
+  incoming: Record<string, unknown>,
+) {
+  return parseInvitationTheme({
+    ...current,
+    ...incoming,
+    dress_code: { ...obj(current?.dress_code), ...obj(incoming.dress_code) },
+    footer: { ...obj(current?.footer), ...obj(incoming.footer) },
+  });
 }

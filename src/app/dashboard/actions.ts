@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { requireInvitation } from "@/lib/dashboard/session";
-import { parseInvitationTheme } from "@/lib/invitations/theme";
+import { mergeInvitationTheme } from "@/lib/invitations/theme";
+import { vendorSocialUrl } from "@/lib/invitations/coastal-options";
 import { eventRsvpReady } from "@/lib/invitations/event-rsvp-setup";
 import { safeUrl, seatCount } from "@/lib/invitations/validation";
 import { guestDatabaseError } from "@/lib/guests/errors";
@@ -112,13 +113,15 @@ export async function updateInvitation(
       throw new Error("Invalid invitation settings");
     // Editors opened before this feature existed omit the key. Preserve the
     // current server setting; a modern editor can still explicitly turn it off.
-    theme = parseInvitationTheme({
-      ...invitation.theme,
-      ...inputTheme,
-      rsvp_events_enabled: Object.hasOwn(inputTheme, "rsvp_events_enabled")
-        ? inputTheme.rsvp_events_enabled
-        : invitation.theme?.rsvp_events_enabled === true,
-    });
+    for (const kind of ["whatsapp", "instagram"] as const) {
+      const value = inputTheme.footer?.[`${kind}_url`];
+      if (value && !vendorSocialUrl(value, kind))
+        return {
+          ok: false,
+          error: `Add a valid HTTPS ${kind === "whatsapp" ? "WhatsApp (wa.me or whatsapp.com)" : "Instagram (instagram.com)"} link in Footer, or clear the link.`,
+        };
+    }
+    theme = mergeInvitationTheme(invitation.theme, inputTheme);
   } catch {
     return {
       ok: false,

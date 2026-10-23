@@ -162,7 +162,7 @@ export function useCoastalMotion(
           const reveals: { element: HTMLElement; tween: gsap.core.Tween }[] =
             [];
           const groups = select(
-            ".coastal-couple article, .coastal-details > h2, .coastal-event, .coastal-dress, .coastal-rsvp > h2, .coastal-rsvp > p, .coastal-gallery-board button, .coastal-gift-card, .coastal-wishes > h2, .coastal-wishes blockquote, .coastal-extra",
+            ".coastal-couple article, .coastal-details > h2, .coastal-event, .coastal-dress, .coastal-rsvp > h2, .coastal-rsvp > p, .coastal-gallery-board button, .coastal-gift-card, .coastal-wishes > h2, .coastal-wishes-scroll, .coastal-extra",
           );
           groups.forEach((target: HTMLElement) => {
             const tween = gsap.from(target, {

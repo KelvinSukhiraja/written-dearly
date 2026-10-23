@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState, useState, useEffect } from "react";
 import { updateInvitation, type ActionResult } from "@/app/dashboard/actions";
 import { MediaUpload } from "./media-upload";
+import { CoastalPaletteEditor, CoastalFooterEditor } from "./coastal-settings";
 import { youtubeVideoId } from "@/lib/invitations/youtube";
 import { YouTubeMusic } from "@/components/templates/youtube-music";
 import {
@@ -21,6 +22,7 @@ const tabs = [
   "Music",
   "Publishing",
   "Dress code & gifts",
+  "Footer",
 ];
 function Field({
   label,
@@ -166,6 +168,7 @@ export function InvitationEditor({
             [1, "Events"],
             [2, "Photos, story & music"],
             [7, "Dress code & gifts"],
+            [8, "Footer"],
             [6, "Publish"],
           ].map(([index, name]) => {
             const i = Number(index);
@@ -764,10 +767,12 @@ export function InvitationEditor({
                   setting("dress_code", { ...theme.dress_code, note })
                 }
               />
-              <p className="text-sm text-muted">
-                The Coastal design includes the beige, brown, taupe and black
-                colour palette.
-              </p>
+              <CoastalPaletteEditor
+                colors={theme.dress_code.colors}
+                onChange={(colors) =>
+                  setting("dress_code", { ...theme.dress_code, colors })
+                }
+              />
               <h2>Send gift</h2>
               <label className="flex items-center gap-3">
                 <input
@@ -807,6 +812,16 @@ export function InvitationEditor({
                 }
               />
             </div>
+          )}
+          {tab === 8 && (
+            <CoastalFooterEditor
+              footer={theme.footer}
+              onChange={(footer) => setting("footer", footer)}
+              userId={userId}
+              invitationId={invitation.id}
+              previewOnly={false}
+              onBusy={(v) => setBusy((n) => n + (v ? 1 : -1))}
+            />
           )}
           {tab === 6 && (
             <div className="space-y-6">

@@ -12,6 +12,7 @@ export function MediaUpload({
   onBusy,
   preview = "original",
   allowRemove = true,
+  imagePurpose = "photo",
 }: {
   label: string;
   value: string;
@@ -22,6 +23,7 @@ export function MediaUpload({
   onBusy?: (busy: boolean) => void;
   preview?: "original" | "portrait" | "story" | "none";
   allowRemove?: boolean;
+  imagePurpose?: "photo" | "logo";
 }) {
   const id = useId();
   const [busy, setBusy] = useState(false);
@@ -50,9 +52,10 @@ export function MediaUpload({
       let type = file.type;
       if (!audio) {
         const bitmap = await createImageBitmap(file);
-        if (bitmap.width < 300 || bitmap.height < 300) {
+        const minimum = imagePurpose === "logo" ? 16 : 300;
+        if (bitmap.width < minimum || bitmap.height < minimum) {
           bitmap.close();
-          throw new Error("Choose an image at least 300 × 300 pixels.");
+          throw new Error(`Choose an image at least ${minimum} × ${minimum} pixels.`);
         }
         const ratio = Math.min(1, 2200 / Math.max(bitmap.width, bitmap.height));
         const canvas = document.createElement("canvas");

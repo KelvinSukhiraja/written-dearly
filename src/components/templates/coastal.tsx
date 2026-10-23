@@ -19,6 +19,8 @@ import { ClassicRsvp } from "./classic-rsvp";
 import { ReceptionPass } from "./reception-pass";
 import { YouTubeMusic } from "./youtube-music";
 import { CoastalGalleryViewer } from "./coastal-gallery-viewer";
+import { CoastalWishes } from "./coastal-wishes";
+import { coastalPalettes } from "@/lib/invitations/coastal-options";
 import { noWishes, type InvitationWishes } from "@/lib/invitations/wishes";
 import "./coastal.css";
 
@@ -178,10 +180,18 @@ export function CoastalInvitation({
   const [menu, setMenu] = useState(false);
   const [photo, setPhoto] = useState<number | null>(null);
   const [copyStatus, setCopyStatus] = useState("");
+  const [failedVendorLogo, setFailedVendorLogo] = useState("");
   const [musicPlaying, setMusicPlaying] = useState(false);
   const menuRef = useRef<HTMLDialogElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const vendorLogoRef = useRef<HTMLImageElement>(null);
   const homeRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    // An image can fail before hydration attaches its error handler.
+    const logo = vendorLogoRef.current;
+    if (logo?.complete && !logo.naturalWidth)
+      setFailedVendorLogo(theme.footer.logo_url);
+  }, [theme.footer.logo_url]);
   const date = formatInviteDate(invitation.wedding_date)?.toUpperCase() ?? "";
   const groom = invitation.groom_name || "The groom",
     bride = invitation.bride_name || "The bride";
@@ -501,13 +511,31 @@ export function CoastalInvitation({
                     : theme.dress_code.title.toUpperCase()}
                 </h3>
                 <div>
-                  {[2, 3, 4, 5].map((n) => (
-                    <img
-                      key={n}
-                      src={art(`19-166-imgEllipse${n}.svg`)}
-                      alt={["Beige", "Brown", "Taupe", "Black"][n - 2]}
-                    />
-                  ))}
+                  {(reference
+                    ? coastalPalettes[0].colors
+                    : theme.dress_code.colors
+                  ).map((c, i) => {
+                    const original = coastalPalettes[0].colors.findIndex(
+                      (v) => v.color === c.color,
+                    );
+                    return original >= 0 ? (
+                      <img
+                        key={i}
+                        src={art(`19-166-imgEllipse${original + 2}.svg`)}
+                        alt={c.name}
+                        title={`${c.name} (${c.color})`}
+                      />
+                    ) : (
+                      <span
+                        key={i}
+                        className="coastal-dress-swatch"
+                        role="img"
+                        aria-label={`${c.name} (${c.color})`}
+                        title={`${c.name} (${c.color})`}
+                        style={{ backgroundColor: c.color }}
+                      />
+                    );
+                  })}
                 </div>
                 <p style={{ whiteSpace: "pre-line" }}>
                   {reference
@@ -676,14 +704,7 @@ export function CoastalInvitation({
               />
               <h2>WISHES</h2>
               <p>Thank you for all the wishes!</p>
-              <div>
-                {wishes.map((w, i) => (
-                  <blockquote key={i}>
-                    <p>“{w.message}”</p>
-                    <cite>from {w.name}</cite>
-                  </blockquote>
-                ))}
-              </div>
+              <CoastalWishes wishes={wishes} />
             </section>
           )}
           {theme.details.map((d, i) => (
@@ -708,7 +729,12 @@ export function CoastalInvitation({
             </section>
           )}
           {guest?.rsvp_status === "attending" && guest.checkin_token && (
-            <section className="coastal-extra">
+            <section
+              className="coastal-pass-section"
+              id="reception-pass"
+              aria-label="Your reception pass"
+              tabIndex={-1}
+            >
               <ReceptionPass
                 token={guest.checkin_token}
                 name={guest.name}
@@ -717,17 +743,63 @@ export function CoastalInvitation({
             </section>
           )}
           <footer className="coastal-footer">
-            <p>Written Dearly</p>
+            {reference ? (
+              <p className="coastal-footer-vendor">LOGO VENDOR</p>
+            ) : (
+              theme.footer.enabled &&
+              (theme.footer.logo_url &&
+              failedVendorLogo !== theme.footer.logo_url ? (
+                <img
+                  ref={vendorLogoRef}
+                  className="coastal-footer-logo"
+                  src={theme.footer.logo_url}
+                  alt={theme.footer.vendor_name || "Vendor logo"}
+                  onError={() => setFailedVendorLogo(theme.footer.logo_url)}
+                />
+              ) : (
+                theme.footer.vendor_name && (
+                  <p className="coastal-footer-vendor">
+                    {theme.footer.vendor_name}
+                  </p>
+                )
+              ))
+            )}
             <p>Copyright © {new Date().getFullYear()}. All rights reserved.</p>
-            <a
-              href="#coastal-home"
-              onClick={(e) => {
-                e.preventDefault();
-                go("coastal-home");
-              }}
-            >
-              Back to top
-            </a>
+            {reference ? (
+              <div className="coastal-footer-socials" aria-hidden="true">
+                <span>WA</span>
+                <span>IG</span>
+              </div>
+            ) : (
+              theme.footer.enabled &&
+              (theme.footer.whatsapp_url || theme.footer.instagram_url) && (
+                <nav
+                  className="coastal-footer-socials"
+                  aria-label="Vendor social links"
+                >
+                  {theme.footer.whatsapp_url && (
+                    <a
+                      href={theme.footer.whatsapp_url}
+                      aria-label="Vendor WhatsApp"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      WA
+                    </a>
+                  )}
+                  {theme.footer.instagram_url && (
+                    <a
+                      href={theme.footer.instagram_url}
+                      aria-label="Vendor Instagram"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      IG
+                    </a>
+                  )}
+                </nav>
+              )
+            )}
           </footer>
         </div>
         {theme.music_source === "upload" && theme.music_url && (
