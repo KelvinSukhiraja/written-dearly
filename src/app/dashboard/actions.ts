@@ -101,11 +101,23 @@ export async function updateInvitation(
     return { ok: false, error: "Please enter a valid wedding date." };
   let theme;
   try {
-    theme = parseInvitationTheme(
-      JSON.parse(
-        asString(formData.get("theme")) || JSON.stringify(invitation.theme),
-      ),
+    const inputTheme = JSON.parse(
+      asString(formData.get("theme")) || JSON.stringify(invitation.theme),
     );
+    if (
+      !inputTheme ||
+      typeof inputTheme !== "object" ||
+      Array.isArray(inputTheme)
+    )
+      throw new Error("Invalid invitation settings");
+    // Editors opened before this feature existed omit the key. Preserve the
+    // current server setting; a modern editor can still explicitly turn it off.
+    theme = parseInvitationTheme({
+      ...inputTheme,
+      rsvp_events_enabled: Object.hasOwn(inputTheme, "rsvp_events_enabled")
+        ? inputTheme.rsvp_events_enabled
+        : invitation.theme?.rsvp_events_enabled === true,
+    });
   } catch {
     return {
       ok: false,
