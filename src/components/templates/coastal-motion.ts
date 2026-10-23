@@ -61,12 +61,8 @@ export function useCoastalMotion(
                 0.15,
               );
           }
-          gsap.from(select(".coastal-home .coastal-cover-photo"), {
-            scale: 1.04,
-            duration: 2.3,
-            ease: "sine.out",
-            clearProps: "transform",
-          });
+          // Keep the clipping frame stationary; only its image gets parallax.
+          // Scaling the frame lets the cover bleed across the next section.
           gsap.from(
             select(
               ".coastal-home-title > p, .coastal-home-title h1 > *, .coastal-date",
@@ -179,15 +175,8 @@ export function useCoastalMotion(
             });
             reveals.push({ element: target, tween });
           });
-          select(".coastal-person-photo").forEach((target: HTMLElement) => {
-            gsap.from(target, {
-              clipPath: "inset(0 0 8% 0)",
-              duration: 1.35,
-              ease: "power2.out",
-              clearProps: "clipPath",
-              scrollTrigger: { trigger: target, start: "top 94%", once: true },
-            });
-          });
+          // Portraits already enter with their article. Keep their overflow
+          // mask static while the inner image moves to avoid competing clips.
           // Keyboard navigation must never land on an invisible control.
           const revealFocused = (event: FocusEvent) => {
             reveals.forEach(({ element: target, tween }) => {

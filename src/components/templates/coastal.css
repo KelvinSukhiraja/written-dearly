@@ -80,6 +80,11 @@
   height: 100dvh;
   isolation: isolate;
 }
+.coastal-home {
+  /* Keep the section boundary stable as mobile browser controls retract. */
+  height: 100svh;
+  overflow: clip;
+}
 .coastal-opening.coastal-opening-leaving {
   position: absolute;
   top: 0;
@@ -195,19 +200,7 @@
 }
 .coastal-opening-content button {
   margin-top: 16px;
-  min-height: 44px;
-  padding: 11px 24px;
-  border: 1px solid #402518;
-  border-radius: 24px;
-  background: #402518;
-  color: #fff8ef;
-  font: 13px/20px var(--coastal-sans);
-}
-.coastal-opening-content button::after {
-  content: none;
-}
-.coastal-opening-content button:focus-visible {
-  outline-color: #402518;
+  border-width: 1px;
 }
 @media (max-height: 650px) {
   .coastal-opening-card {
