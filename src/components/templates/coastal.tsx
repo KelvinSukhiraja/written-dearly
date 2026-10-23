@@ -19,6 +19,7 @@ import { ClassicRsvp } from "./classic-rsvp";
 import { ReceptionPass } from "./reception-pass";
 import { YouTubeMusic } from "./youtube-music";
 import { CoastalGalleryViewer } from "./coastal-gallery-viewer";
+import { noWishes, type InvitationWishes } from "@/lib/invitations/wishes";
 import "./coastal.css";
 
 const art = (name: string) => `/invitation-art/coastal/${name}`;
@@ -26,7 +27,7 @@ export type CoastalReference = {
   openingPhoto: string;
   groomFullName: string;
   brideFullName: string;
-  gift: { account: string; number: string };
+  gift: { account: string; number: string; bank?: string };
   wishes: { name: string; message: string }[];
 };
 const gallerySlots = [
@@ -132,7 +133,7 @@ function ReferenceRsvp({ name, events }: { name: string; events: string[] }) {
             </div>
           </fieldset>
           <label>
-            Number of guests, including you
+            No of pax
             <select defaultValue="1">
               {[1, 2, 3].map((n) => (
                 <option key={n}>{n}</option>
@@ -159,12 +160,14 @@ export function CoastalInvitation({
   token,
   preview = false,
   reference,
+  publicWishes = noWishes,
 }: {
   invitation: Invitation;
   guest?: GuestContext | null;
   token?: string;
   preview?: boolean;
   reference?: CoastalReference;
+  publicWishes?: InvitationWishes;
 }) {
   const theme = parseInvitationTheme(invitation.theme);
   const [opened, setOpened] = useState(false);
@@ -186,9 +189,21 @@ export function CoastalInvitation({
   const events = theme.events.filter(
     (e) => !guest?.event_ids?.length || guest.event_ids.includes(e.id),
   );
-  // Account details have no dedicated field in the approved model yet.
-  // Keep generic detail text intact instead of guessing an account number.
-  const gift = reference?.gift;
+  const gift =
+    reference?.gift ||
+    (theme.gift.enabled &&
+    theme.gift.bank &&
+    theme.gift.account_holder &&
+    theme.gift.account_number
+      ? {
+          account: theme.gift.account_holder,
+          number: theme.gift.account_number,
+          bank: theme.gift.bank,
+        }
+      : null);
+  const wishes =
+    reference?.wishes ??
+    (theme.public_wishes_visible ? publicWishes.items : []);
   useEffect(() => {
     if (!menu) return;
     const dialog = menuRef.current;
@@ -236,7 +251,7 @@ export function CoastalInvitation({
     ["coastal-details", "Wedding details"],
     ["coastal-rsvp", "RSVP"],
     ...(theme.gallery.length ? [["coastal-gallery", "Gallery"]] : []),
-    ...(reference ? [["coastal-wishes", "Wishes"]] : []),
+    ...(wishes.length ? [["coastal-wishes", "Wishes"]] : []),
     ...(gift ? [["coastal-gift", "Send gift"]] : []),
   ];
   return (
@@ -471,7 +486,7 @@ export function CoastalInvitation({
                 )}
                 {e.description && <p>{e.description}</p>}
                 {e.instructions && <p>{e.instructions}</p>}
-                {!reference && e.dress_code && (
+                {!reference && !theme.dress_code.enabled && e.dress_code && (
                   <p>Dress code: {e.dress_code}</p>
                 )}
               </article>
@@ -482,10 +497,14 @@ export function CoastalInvitation({
                 <p>{invitation.venue_address}</p>
               </div>
             )}
-            {reference && (
+            {(reference || theme.dress_code.enabled) && (
               <div className="coastal-dress">
                 <p>DRESSCODE</p>
-                <h3>STRICTLY NO BATIK</h3>
+                <h3>
+                  {reference
+                    ? "STRICTLY NO BATIK"
+                    : theme.dress_code.title.toUpperCase()}
+                </h3>
                 <div>
                   {[2, 3, 4, 5].map((n) => (
                     <img
@@ -495,13 +514,10 @@ export function CoastalInvitation({
                     />
                   ))}
                 </div>
-                <p>
-                  OR BLACK SUIT FOR MEN
-                  <br />
-                  <br />
-                  We invite you to incorporate our
-                  <br />
-                  wedding colors into your attire
+                <p style={{ whiteSpace: "pre-line" }}>
+                  {reference
+                    ? "OR BLACK SUIT FOR MEN\n\nWe invite you to incorporate our\nwedding colors into your attire"
+                    : theme.dress_code.note}
                 </p>
               </div>
             )}
@@ -531,6 +547,8 @@ export function CoastalInvitation({
                 events={events}
                 eventRsvp={theme.rsvp_events_enabled}
                 variant="coastal"
+                publicWishes={publicWishes.ready}
+                ownWish={publicWishes.ownMessage}
               />
             )}
           </section>
@@ -608,6 +626,7 @@ export function CoastalInvitation({
                     to the couple’s account
                   </p>
                   <h3>
+                    {gift.bank ? `${gift.bank} - ` : ""}
                     {gift.account}
                     <br />
                     {gift.number}
@@ -649,7 +668,7 @@ export function CoastalInvitation({
               </div>
             </section>
           )}
-          {reference && (
+          {wishes.length > 0 && (
             <section
               className="coastal-wishes"
               id="coastal-wishes"
@@ -663,7 +682,7 @@ export function CoastalInvitation({
               <h2>WISHES</h2>
               <p>Thank you for all the wishes!</p>
               <div>
-                {reference.wishes.map((w, i) => (
+                {wishes.map((w, i) => (
                   <blockquote key={i}>
                     <p>“{w.message}”</p>
                     <cite>from {w.name}</cite>

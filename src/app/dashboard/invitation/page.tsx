@@ -4,6 +4,7 @@ import { InvitationEditor } from "@/components/dashboard/invitation-editor";
 import { requireInvitation } from "@/lib/dashboard/session";
 import Link from "next/link";
 import { eventRsvpReady } from "@/lib/invitations/event-rsvp-setup";
+import { WishesManager } from "@/components/dashboard/wishes-manager";
 
 export default async function InvitationPage({
   searchParams,
@@ -12,6 +13,15 @@ export default async function InvitationPage({
 }) {
   const { invitation, user, supabase } = await requireInvitation();
   const eventSetupReady = await eventRsvpReady(supabase, invitation.id);
+  const wishes = await supabase
+    .from("invitation_wish_messages")
+    .select("id,name,message,hidden")
+    .eq("invitation_id", invitation.id)
+    .neq("message", "")
+    .order("created_at", { ascending: false });
+  const wishesReady = !wishes.error;
+  if (wishes.error && !["42P01", "PGRST205"].includes(wishes.error.code))
+    throw new Error("Your wishes could not be loaded. Please try again.");
   const { section } = await searchParams;
 
   return (
@@ -41,6 +51,7 @@ export default async function InvitationPage({
         eventSetupReady={eventSetupReady}
         initialTab={section === "publish" ? 6 : 0}
       />
+      <WishesManager items={wishes.data ?? []} ready={wishesReady} />
     </div>
   );
 }

@@ -104,6 +104,18 @@ const legacy = form();
 legacy.delete("event_mode");
 assert.equal((await submit(legacy)).ok, true);
 assert.equal(calls.at(-1)[0], "respond_to_invitation");
+answer = {
+  data: { version: 6, event_responses: { dinner: "attending" } },
+  error: null,
+};
+assert.equal((await submit(form({ public_wish: "on" }))).ok, true);
+assert.equal(calls.at(-1)[0], "respond_to_invitation_with_wish");
+assert.equal(calls.at(-1)[1].p_event_mode, true);
+const publicLegacy = form({ public_wish: "on" });
+publicLegacy.delete("event_mode");
+assert.equal((await submit(publicLegacy)).ok, true);
+assert.equal(calls.at(-1)[0], "respond_to_invitation_with_wish");
+assert.equal(calls.at(-1)[1].p_event_mode, false);
 console.log(
   "PASS: real server action routes legacy/event calls, rejects malformed input before writes, passes count/events/version, clears declined dietary, returns receipt, handles setup/conflict/network/uncertain-result errors, invalidates only after success.",
 );

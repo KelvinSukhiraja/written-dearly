@@ -21,6 +21,8 @@ export function ClassicRsvp({
   events = [],
   eventRsvp = false,
   variant = "classic",
+  publicWishes = false,
+  ownWish = "",
 }: {
   slug: string;
   published: boolean;
@@ -33,6 +35,8 @@ export function ClassicRsvp({
   events?: InvitationEvent[];
   eventRsvp?: boolean;
   variant?: "classic" | "coastal";
+  publicWishes?: boolean;
+  ownWish?: string;
 }) {
   const [expired, setExpired] = useState(false);
   useEffect(() => {
@@ -75,7 +79,9 @@ export function ClassicRsvp({
       )
       .map((e) => e.id),
   );
-  const [message, setMessage] = useState(person?.rsvp_message ?? "");
+  const [message, setMessage] = useState(
+    publicWishes ? ownWish : (person?.rsvp_message ?? ""),
+  );
   const [dietary, setDietary] = useState(person?.dietary ?? "");
   const [edited, setEdited] = useState(false);
   const [savedVersion, setSavedVersion] = useState(person?.version);
@@ -136,6 +142,7 @@ export function ClassicRsvp({
     >
       <input type="hidden" name="slug" value={slug} />
       <input type="hidden" name="token" value={token} />
+      {publicWishes && <input type="hidden" name="public_wish" value="on" />}
       {eventRsvp && (
         <>
           <input type="hidden" name="event_mode" value="on" />
@@ -238,10 +245,12 @@ export function ClassicRsvp({
         {eventRsvp && attending !== "no" && (
           <fieldset>
             <legend>Event attendance</legend>
-            <p className="rsvp-note">
-              Select the events your group will attend. When you submit,
-              unchecked events are saved as not attending.
-            </p>
+            {!coastal && (
+              <p className="rsvp-note">
+                Select the events your group will attend. When you submit,
+                unchecked events are saved as not attending.
+              </p>
+            )}
             <div className="coastal-event-choices">
               {available.map((e) => (
                 <label key={e.id}>
@@ -267,7 +276,7 @@ export function ClassicRsvp({
         {attending !== "no" && (
           <>
             <label>
-              Number of guests, including you
+              {coastal ? "No of pax" : "Number of guests, including you"}
               <select
                 name="attending_count"
                 value={count}
@@ -280,7 +289,7 @@ export function ClassicRsvp({
                 ))}
               </select>
             </label>
-            {eventRsvp && (
+            {eventRsvp && !coastal && (
               <p className="rsvp-note">
                 This same guest count applies to every selected event.
               </p>
@@ -299,15 +308,25 @@ export function ClassicRsvp({
         )}
         {wishes && (
           <label>
-            Your wishes (private message)
+            {coastal || publicWishes
+              ? "Your wishes"
+              : "Your wishes (private message)"}
             <textarea
               name="message"
+              aria-label={
+                coastal || publicWishes
+                  ? "Your wishes"
+                  : "Your wishes (private message)"
+              }
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Type your wishes"
               maxLength={1000}
               rows={coastal ? 2 : 4}
             />
+            {publicWishes && (
+              <small>Your wish may appear on this invitation.</small>
+            )}
           </label>
         )}
       </fieldset>
@@ -319,9 +338,11 @@ export function ClassicRsvp({
       <button className="submit-button" disabled={pending || unavailable}>
         {pending
           ? "Saving your reply…"
-          : person.rsvp_status === "pending"
-            ? "Send your RSVP"
-            : "Update your RSVP"}
+          : coastal
+            ? "submit"
+            : person.rsvp_status === "pending"
+              ? "Send your RSVP"
+              : "Update your RSVP"}
         {!pending && !coastal && (
           <>
             {" "}

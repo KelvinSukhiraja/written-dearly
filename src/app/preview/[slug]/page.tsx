@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { requireInvitation } from "@/lib/dashboard/session";
 import { InvitationTemplate } from "@/components/templates";
 import { supportedDesign } from "@/lib/invitations/designs";
+import { loadInvitationWishes } from "@/lib/invitations/wishes";
 export const dynamic = "force-dynamic";
 export default async function Preview({
   params,
@@ -29,6 +30,7 @@ export default async function Preview({
       invitation={invitation}
       componentKey={design || template?.component_key || "classic"}
       preview
+      publicWishes={await loadInvitationWishes(supabase, slug)}
     />
   );
 }

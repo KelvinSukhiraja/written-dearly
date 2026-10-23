@@ -81,12 +81,15 @@ export async function submitRsvp(
           error: "Choose at least one event, or select that you cannot attend.",
         };
       const { data, error } = await supabase.rpc(
-        "respond_to_invitation_events",
+        form.get("public_wish") === "on"
+          ? "respond_to_invitation_with_wish"
+          : "respond_to_invitation_events",
         {
           ...params,
           p_selected_events: selected,
           p_event_ids: ids,
           p_version: version,
+          ...(form.get("public_wish") === "on" ? { p_event_mode: true } : {}),
         },
       );
       if (error)
@@ -108,7 +111,22 @@ export async function submitRsvp(
         eventResponses: eventResponseMap(data.event_responses),
       };
     } else {
-      const { error } = await supabase.rpc("respond_to_invitation", params);
+      const { error } = await supabase.rpc(
+        form.get("public_wish") === "on"
+          ? "respond_to_invitation_with_wish"
+          : "respond_to_invitation",
+        {
+          ...params,
+          ...(form.get("public_wish") === "on"
+            ? {
+                p_event_mode: false,
+                p_selected_events: [],
+                p_event_ids: [],
+                p_version: 0,
+              }
+            : {}),
+        },
+      );
       if (error)
         return {
           ok: false,

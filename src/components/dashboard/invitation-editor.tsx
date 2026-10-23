@@ -20,6 +20,7 @@ const tabs = [
   "Guest information",
   "Music",
   "Publishing",
+  "Dress code & gifts",
 ];
 function Field({
   label,
@@ -139,7 +140,7 @@ export function InvitationEditor({
       theme.events.map((v, i) => (i === index ? { ...v, [key]: value } : v)),
     );
   return (
-    <form action={action} className="space-y-6">
+    <form action={action} className="space-y-6" onReset={(e) => e.preventDefault()}>
       <fieldset disabled={pending} className="min-w-0 space-y-6">
         {[
           "bride_name",
@@ -164,6 +165,7 @@ export function InvitationEditor({
             [0, "The essentials"],
             [1, "Events"],
             [2, "Photos, story & music"],
+            [7, "Dress code & gifts"],
             [6, "Publish"],
           ].map(([index, name]) => {
             const i = Number(index);
@@ -731,6 +733,81 @@ export function InvitationEditor({
               )}
             </div>
           )}
+          {tab === 7 && (
+            <div className="space-y-7">
+              <h2>Dress code</h2>
+              <label className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={theme.dress_code.enabled}
+                  onChange={(e) =>
+                    setting("dress_code", {
+                      ...theme.dress_code,
+                      enabled: e.target.checked,
+                    })
+                  }
+                />
+                Show the Coastal dress-code section
+              </label>
+              <Field
+                label="Dress-code heading"
+                value={theme.dress_code.title}
+                onChange={(title) =>
+                  setting("dress_code", { ...theme.dress_code, title })
+                }
+              />
+              <Field
+                label="Dress-code note"
+                area
+                value={theme.dress_code.note}
+                onChange={(note) =>
+                  setting("dress_code", { ...theme.dress_code, note })
+                }
+              />
+              <p className="text-sm text-muted">
+                The Coastal design includes the beige, brown, taupe and black
+                colour palette.
+              </p>
+              <h2>Send gift</h2>
+              <label className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={theme.gift.enabled}
+                  onChange={(e) =>
+                    setting("gift", {
+                      ...theme.gift,
+                      enabled: e.target.checked,
+                    })
+                  }
+                />
+                Show Send gift on the invitation
+              </label>
+              <p className="text-sm text-muted">
+                Enter the couple’s bank details. The section appears once all
+                three fields are filled and saved. These details will be visible
+                to invitation visitors.
+              </p>
+              <Field
+                label="Bank name"
+                value={theme.gift.bank}
+                onChange={(bank) => setting("gift", { ...theme.gift, bank })}
+              />
+              <Field
+                label="Account holder"
+                value={theme.gift.account_holder}
+                onChange={(account_holder) =>
+                  setting("gift", { ...theme.gift, account_holder })
+                }
+              />
+              <Field
+                label="Account number"
+                value={theme.gift.account_number}
+                onChange={(account_number) =>
+                  setting("gift", { ...theme.gift, account_number })
+                }
+              />
+            </div>
+          )}
           {tab === 6 && (
             <div className="space-y-6">
               <h2>Publish & RSVP</h2>
@@ -783,8 +860,22 @@ export function InvitationEditor({
                   checked={theme.wishes_enabled}
                   onChange={(e) => setting("wishes_enabled", e.target.checked)}
                 />{" "}
-                Let guests leave a private message with their RSVP
+                Let guests leave wishes with their RSVP
               </label>
+              <label className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={theme.public_wishes_visible}
+                  onChange={(e) =>
+                    setting("public_wishes_visible", e.target.checked)
+                  }
+                />
+                Show guest wishes on the invitation
+              </label>
+              <p className="text-sm text-muted">
+                New wishes appear by default. You can hide individual wishes
+                below. Earlier private messages stay private.
+              </p>
             </div>
           )}
         </section>

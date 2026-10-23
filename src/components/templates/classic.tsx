@@ -15,6 +15,7 @@ import { ReceptionPass } from "./reception-pass";
 import { Gallery } from "./gallery";
 import { InvitationMotion } from "./invitation-motion";
 import { YouTubeMusic } from "./youtube-music";
+import { noWishes, type InvitationWishes } from "@/lib/invitations/wishes";
 
 // Keep the invitation's first paint self-contained. Couples can replace these
 // with their own saved media, but a draft should never depend on a third-party
@@ -46,11 +47,13 @@ export function ClassicInvitation({
   guest,
   token = "",
   preview = false,
+  publicWishes = noWishes,
 }: {
   invitation: Invitation;
   guest?: GuestContext | null;
   token?: string;
   preview?: boolean;
+  publicWishes?: InvitationWishes;
 }) {
   const bride = invitation.bride_name?.trim() || "Bride";
   const groom = invitation.groom_name?.trim() || "Groom";
@@ -330,6 +333,8 @@ export function ClassicInvitation({
                 closed={theme.rsvp_closed}
                 deadline={theme.rsvp_deadline}
                 wishes={theme.wishes_enabled}
+                publicWishes={publicWishes.ready}
+                ownWish={publicWishes.ownMessage}
                 events={events}
                 eventRsvp={theme.rsvp_events_enabled}
               />
@@ -347,6 +352,17 @@ export function ClassicInvitation({
               </section>
             )}
 
+          {theme.public_wishes_visible && publicWishes.items.length > 0 && (
+            <section className="section" aria-label="Wishes">
+              <SectionHeading eyebrow="From our guests" title="Wishes" />
+              {publicWishes.items.map((wish, index) => (
+                <blockquote key={index}>
+                  <p>{wish.message}</p>
+                  <cite>{wish.name}</cite>
+                </blockquote>
+              ))}
+            </section>
+          )}
           <footer>
             <p>With love and gratitude</p>
             <div>

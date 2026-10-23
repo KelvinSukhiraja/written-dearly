@@ -1,6 +1,7 @@
 import { ClassicInvitation } from "@/components/templates/classic";
 import { CoastalInvitation } from "@/components/templates/coastal";
 import type { Invitation, GuestContext } from "@/lib/supabase/types";
+import type { InvitationWishes } from "@/lib/invitations/wishes";
 
 const TEMPLATES = {
   classic: ClassicInvitation,
@@ -13,12 +14,14 @@ export function InvitationTemplate({
   guest,
   token,
   preview = false,
+  publicWishes,
 }: {
   invitation: Invitation;
   componentKey: string | null;
   guest?: GuestContext | null;
   token?: string;
   preview?: boolean;
+  publicWishes?: InvitationWishes;
 }) {
   const Template =
     (componentKey && componentKey in TEMPLATES
@@ -31,6 +34,7 @@ export function InvitationTemplate({
       guest={guest}
       token={token}
       preview={preview}
+      publicWishes={publicWishes}
     />
   );
 }

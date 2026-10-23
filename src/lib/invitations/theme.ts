@@ -34,6 +34,14 @@ export type InvitationTheme = {
   rsvp_events_enabled: boolean;
   rsvp_deadline: string;
   wishes_enabled: boolean;
+  public_wishes_visible: boolean;
+  dress_code: { enabled: boolean; title: string; note: string };
+  gift: {
+    enabled: boolean;
+    bank: string;
+    account_holder: string;
+    account_number: string;
+  };
   details: { title: string; body: string; url: string }[];
   milestones: { date: string; title: string; description: string }[];
 };
@@ -49,6 +57,12 @@ export function parseInvitationTheme(
   theme: Record<string, unknown> | null | undefined,
 ): InvitationTheme {
   const s = theme ?? {};
+  const dress = obj(s.dress_code),
+    gift = obj(s.gift);
+  const eventDress =
+    list(s.events)
+      .map((e) => str(obj(e).dress_code, 300))
+      .find(Boolean) || "";
   return {
     gallery: list(s.gallery).flatMap((value) => {
       const v = obj(value);
@@ -106,6 +120,21 @@ export function parseInvitationTheme(
         ? new Date(s.rsvp_deadline).toISOString()
         : "",
     wishes_enabled: s.wishes_enabled !== false,
+    public_wishes_visible: s.public_wishes_visible !== false,
+    dress_code: {
+      enabled:
+        typeof dress.enabled === "boolean" ? dress.enabled : !!eventDress,
+      title: str(dress.title, 300) || eventDress,
+      note:
+        str(dress.note, 500) ||
+        "OR BLACK SUIT FOR MEN\n\nWe invite you to incorporate our\nwedding colors into your attire",
+    },
+    gift: {
+      enabled: gift.enabled === true,
+      bank: str(gift.bank, 100),
+      account_holder: str(gift.account_holder, 200),
+      account_number: str(gift.account_number, 100),
+    },
     details: list(s.details)
       .map((value) => {
         const v = obj(value);

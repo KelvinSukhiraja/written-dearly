@@ -16,6 +16,9 @@ const invitation = {
   slug: "sample",
   theme: {
     rsvp_events_enabled: true,
+    public_wishes_visible: false,
+    gift: { enabled: true, bank: "Demo bank", account_holder: "Sample couple", account_number: "0000" },
+    dress_code: { enabled: true, title: "No batik", note: "Sample note" },
     events: [{ id: "dinner", title: "Dinner" }],
   },
 };
@@ -61,6 +64,12 @@ const submit = (theme) => {
 };
 assert.equal((await submit({ events: invitation.theme.events })).ok, true);
 assert.equal(writes.at(-1).theme.rsvp_events_enabled, true);
+assert.deepEqual(writes.at(-1).theme.gift, invitation.theme.gift);
+assert.deepEqual(writes.at(-1).theme.dress_code, invitation.theme.dress_code);
+assert.equal(writes.at(-1).theme.public_wishes_visible, false);
+assert.equal((await submit({ events: invitation.theme.events, public_wishes_visible: true, gift: { ...invitation.theme.gift, enabled: false } })).ok, true);
+assert.equal(writes.at(-1).theme.public_wishes_visible, true);
+assert.equal(writes.at(-1).theme.gift.enabled, false);
 assert.equal(
   (
     await submit({
