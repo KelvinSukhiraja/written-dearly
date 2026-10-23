@@ -433,11 +433,6 @@ export function CoastalInvitation({
             <section className="coastal-countdown">
               <p>COUNTDOWN</p>
               <ClassicCountdown weddingDate={invitation.wedding_date} />
-              <div className="coastal-countdown-lines" aria-hidden="true">
-                {[0, 1, 2].map((n) => (
-                  <img key={n} src={art("18-123-imgLine4.svg")} alt="" />
-                ))}
-              </div>
             </section>
           )}
           <section
@@ -742,6 +737,8 @@ export function CoastalInvitation({
               <button
                 className="coastal-music"
                 type="button"
+                aria-label={musicPlaying ? "Pause music" : "Play music"}
+                title={musicPlaying ? "Pause music" : "Play music"}
                 onClick={async () => {
                   if (!audioRef.current) return;
                   if (musicPlaying) {
@@ -757,7 +754,13 @@ export function CoastalInvitation({
                   }
                 }}
               >
-                {musicPlaying ? "Pause music" : "Play music"}
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  {musicPlaying ? (
+                    <path d="M7 5h4v14H7zM14 5h4v14h-4z" />
+                  ) : (
+                    <path d="M8 5v14l11-7z" />
+                  )}
+                </svg>
               </button>
             )}
           </>
