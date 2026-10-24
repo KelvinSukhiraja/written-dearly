@@ -880,19 +880,7 @@
   text-transform: uppercase;
   text-decoration: none;
 }
-/* Proximity leaves tall sections freely scrollable; never hijack a wheel/touch. */
 @media (prefers-reduced-motion: no-preference) {
-  .coastal-scroll-snap {
-    scroll-snap-type: y proximity;
-  }
-  .coastal-content > section {
-    scroll-snap-align: start;
-    scroll-snap-stop: normal;
-  }
-  .coastal-scroll-snap:has(dialog[open]),
-  .coastal-scroll-snap:has(input:focus, textarea:focus, select:focus) {
-    scroll-snap-type: none;
-  }
   .coastal-menu::backdrop {
     animation: coastal-backdrop-in 0.6s ease both;
   }

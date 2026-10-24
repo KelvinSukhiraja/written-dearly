@@ -194,18 +194,6 @@ export function CoastalInvitation({
   const vendorLogoRef = useRef<HTMLImageElement>(null);
   const homeRef = useRef<HTMLElement>(null);
   useEffect(() => {
-    if (!opened || openingVisible) return;
-    // Use the existing scroll surface, including embedded owner previews.
-    let parent = rootRef.current?.parentElement;
-    while (parent && parent !== document.documentElement) {
-      if (/(auto|scroll)/.test(getComputedStyle(parent).overflowY)) break;
-      parent = parent.parentElement;
-    }
-    const scroller = parent || document.documentElement;
-    scroller.classList.add("coastal-scroll-snap");
-    return () => scroller.classList.remove("coastal-scroll-snap");
-  }, [opened, openingVisible]);
-  useEffect(() => {
     // An image can fail before hydration attaches its error handler.
     const logo = vendorLogoRef.current;
     if (logo?.complete && !logo.naturalWidth)
